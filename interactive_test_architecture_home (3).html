@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Test: Architecture & Home - الاختبار الإلكتروني</title>
+    <!-- تحميل مكتبة Tailwind CSS للتصميم العصري المتجاوب -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تحميل خطوط عربية وإنجليزية واضحة ومناسبة للتعليم -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- أيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f9ff;
+            background-image:
+                radial-gradient(at 10% 10%, rgba(125, 211, 252, 0.5) 0px, transparent 50%),
+                radial-gradient(at 90% 15%, rgba(196, 181, 253, 0.45) 0px, transparent 50%),
+                radial-gradient(at 85% 85%, rgba(254, 240, 138, 0.45) 0px, transparent 50%),
+                radial-gradient(at 15% 85%, rgba(167, 243, 208, 0.5) 0px, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230284c7' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+        .en-text {
+            font-family: 'Fredoka', 'Inter', sans-serif;
+            direction: ltr;
+            unicode-bidi: isolate;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.85); opacity: 0.85; }
+            50% { transform: scale(1.18); opacity: 0.25; }
+            100% { transform: scale(0.85); opacity: 0.85; }
+        }
+        .speaking-ring {
+            animation: pulse-ring 1.5s infinite ease-in-out;
+        }
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+        .animate-float {
+            animation: float-gentle 4s ease-in-out infinite;
+        }
+        .audio-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .audio-btn:hover {
+            transform: scale(1.05);
+        }
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+        .shake {
+            animation: shake 0.45s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+        /* تظليل العناصر النشطة */
+        .active-reading-box {
+            background-color: #fef9c3 !important;
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.38) !important;
+            transition: all 0.25s ease;
+        }
+        /* السحب والإفلات */
+        .word-chip {
+            user-select: none;
+            touch-action: manipulation;
+            transition: all 0.2s ease;
+        }
+        .word-chip.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        .word-chip.selected-chip {
+            background: linear-gradient(135deg, #f59e0b, #ea580c) !important;
+            color: #ffffff !important;
+            border-color: #9a3412 !important;
+            transform: scale(1.08);
+            box-shadow: 0 8px 18px rgba(245, 158, 11, 0.4);
+        }
+        .drop-zone {
+            transition: all 0.2s ease;
+        }
+        .drop-zone.drag-over {
+            background-color: #fef3c7 !important;
+            border-color: #f59e0b !important;
+            transform: scale(1.03);
+        }
+        @media print {
+            header, #liveReadingToast, #toast-message, .no-print {
+                display: none !important;
+            }
+            body {
+                background: #ffffff !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 pb-20">
+
+    <!-- شريط علوي ثابت: عنوان الاختبار + نسبة الإنجاز المباشرة + أدوات الصوت -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-sky-100">
+        <div class="max-w-6xl mx-auto px-4 py-2.5 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2.5">
+                <!-- عنوان الاختبار -->
+                <div class="flex items-center gap-2.5">
+                    <button type="button" onclick="speakText('Interactive Test. Architecture and Home.')" class="audio-btn bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white px-4 py-1.5 rounded-full font-bold text-sm sm:text-lg shadow-md flex items-center gap-2">
+                        <span class="en-text">Interactive Test</span>
+                        <i class="fa-solid fa-ear-listen text-sky-200 text-sm"></i>
+                    </button>
+                    <span class="hidden sm:inline-block text-xs sm:text-sm font-extrabold text-slate-700 bg-sky-50 border border-sky-200 px-3 py-1 rounded-full">
+                        الأسئلة: <span id="header-solved-count" class="en-text text-blue-700">0 / 44</span>
+                    </span>
+                </div>
+
+                <!-- مؤشر المعلمة الصوتية (نفس نظام الصوت التعليمي الهادئ) -->
+                <div id="teacher-status-box" class="flex flex-wrap items-center gap-2 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full shadow-inner">
+                    <div class="relative flex items-center justify-center w-7 h-7 rounded-full bg-teal-600 text-white shrink-0">
+                        <span id="teacher-pulse" class="hidden absolute inset-0 rounded-full bg-teal-400 speaking-ring"></span>
+                        <i class="fa-solid fa-chalkboard-user relative z-10 text-xs"></i>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-teal-700">
+                        <select id="teacher-voice-select" onchange="changeTeacherVoice(this.value)" class="bg-white/90 border border-teal-300 rounded-lg px-2 py-0.5 text-[11px] font-bold text-teal-900 focus:outline-none cursor-pointer">
+                            <option value="calm-female" selected>معلمة هادئة (0.76x)</option>
+                            <option value="calm-male">معلم هادئ (0.76x)</option>
+                        </select>
+                        <button type="button" onclick="toggleSpeechSpeed()" id="speed-toggle-btn" class="bg-white/90 hover:bg-teal-100 border border-teal-300 rounded-lg px-2 py-0.5 text-[11px] font-bold text-teal-900 transition cursor-pointer">
+                            <i class="fa-solid fa-gauge-high text-teal-600"></i> <span id="speed-label">هادئ (0.76x)</span>
+                        </button>
+                    </div>
+                    <button type="button" onclick="stopAudio()" id="stop-audio-btn" class="hidden bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-0.5 rounded-full text-xs font-bold transition">
+                        <i class="fa-solid fa-stop"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- شريط نسبة الإنجاز والدرجة المباشرة -->
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-extrabold text-slate-700 shrink-0">نسبة الإنجاز: <span id="progress-percent-label" class="en-text text-blue-700">0%</span></span>
+                <div class="flex-1 h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+                    <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-blue-500 via-teal-500 to-emerald-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                </div>
+                <span class="text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0">
+                    الدرجة: <span id="header-score-label" class="en-text text-emerald-700">0 / 44</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- مؤشر القراءة الحي -->
+    <div id="liveReadingToast" class="fixed bottom-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 backdrop-blur-md text-white px-5 py-2.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none translate-y-8 max-w-[94vw]">
+        <div class="w-3 h-3 rounded-full bg-emerald-400 animate-ping flex-shrink-0"></div>
+        <div class="truncate" dir="ltr">
+            <span id="toastRateLabel" class="text-[11px] text-slate-400 block font-sans">Calm Educational Voice (0.76x):</span>
+            <span id="toastWord" class="en-text font-black text-amber-300 text-base sm:text-lg tracking-wide">...</span>
+        </div>
+    </div>
+
+    <!-- صندوق الإشعارات اللطيف -->
+    <div id="toast-message" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 hidden bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-xl font-bold text-sm flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-sparkles text-yellow-400"></i>
+        <span id="toast-text">أحسنت!</span>
+    </div>
+
+    <!-- المحتوى الرئيسي للاختبار -->
+    <main class="max-w-6xl mx-auto px-4 pt-6 space-y-10">
+
+        <!-- بطاقة بيانات الطالب -->
+        <section class="bg-white rounded-3xl shadow-md border-2 border-blue-200 p-5 sm:p-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xl shadow shrink-0">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-black text-slate-900">اختبار الوحدة التفاعلي: <span class="en-text text-blue-700">Architecture &amp; Home</span></h1>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500">أجب عن الأسئلة الأربعة التالية، وستظهر لك التغذية الراجعة الفورية وتقرير مستواك النهائي</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="flex-1 md:w-60">
+                        <label for="student-name-input" class="block text-xs font-extrabold text-slate-600 mb-1">اسم الطالب / الطالبة:</label>
+                        <input id="student-name-input" type="text" placeholder="اكتب اسمك هنا..." class="w-full rounded-xl border-2 border-slate-200 focus:border-blue-500 px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none bg-slate-50 focus:bg-white transition">
+                    </div>
+                    <div class="w-36">
+                        <label for="student-class-input" class="block text-xs font-extrabold text-slate-600 mb-1">الفصل / الصف:</label>
+                        <input id="student-class-input" type="text" placeholder="مثال: سادس / أ" class="w-full rounded-xl border-2 border-slate-200 focus:border-blue-500 px-3.5 py-2 text-sm font-bold text-slate-800 focus:outline-none bg-slate-50 focus:bg-white transition">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- السؤال الأول (12 درجة): السحب والإفلات (Choose the correct word) -->
+        <!-- ========================================================= -->
+        <section class="bg-white rounded-3xl shadow-lg border-2 border-sky-200 overflow-hidden">
+            <div dir="ltr" class="bg-gradient-to-r from-blue-700 via-indigo-600 to-cyan-600 p-4 sm:px-6 flex flex-wrap items-center justify-between gap-3 text-white">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="speakText('Question 1. Choose the correct word. Drag and drop the word under the matching picture.')">
+                    <span class="bg-white text-blue-700 w-10 h-10 rounded-2xl flex items-center justify-center font-black text-lg shadow shrink-0 en-text">Q1</span>
+                    <div>
+                        <h2 class="en-text text-xl sm:text-2xl font-extrabold tracking-wide">Choose the correct word (Drag &amp; Drop)</h2>
+                        <span dir="rtl" class="text-xs text-sky-100 font-bold block">اسحب الكلمة وأفلتها في المربع أسفل الصورة المناسبة (أو انقر على الكلمة ثم انقر على الصورة) • 12 درجة</span>
+                    </div>
+                </div>
+                <span class="bg-white/20 border border-white/35 px-3.5 py-1 rounded-full text-xs sm:text-sm font-extrabold">
+                    الدرجة: <span id="q1-score-badge" class="en-text text-yellow-200">0 / 12</span>
+                </span>
+            </div>
+
+            <!-- بنك الكلمات الـ 12 للسحب والإفلات -->
+            <div class="bg-gradient-to-r from-sky-50 via-indigo-50/70 to-amber-50/70 border-b-2 border-sky-100 p-4 sm:p-5">
+                <div class="text-center mb-3">
+                    <span class="text-xs font-extrabold text-indigo-900 bg-white px-3.5 py-1 rounded-full border border-indigo-200 shadow-sm">
+                        <i class="fa-solid fa-hand-pointer text-amber-500 ml-1"></i>
+                        بنك الكلمات (اسحب الكلمة أو اضغط عليها لاختيارها):
+                    </span>
+                </div>
+                <div dir="ltr" id="q1-word-bank" class="flex flex-wrap items-center justify-center gap-2.5">
+                    <!-- يتم توليد أزرار الكلمات الـ 12 برمجياً -->
+                </div>
+            </div>
+
+            <!-- شبكة الصور الـ 12 بنفس ترتيب الورقة المرفقة (4 صفوف × 3 أعمدة) -->
+            <div dir="ltr" class="p-5 sm:p-7 bg-gradient-to-b from-slate-50/60 to-white">
+                <div id="q1-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <!-- يتم توليد البطاقات الـ 12 بالرسوم عالية الدقة برمجياً -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- السؤال الثاني (14 درجة): Write the missing letters -->
+        <!-- ========================================================= -->
+        <section class="bg-white rounded-3xl shadow-lg border-2 border-amber-200 overflow-hidden">
+            <div dir="ltr" class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-4 sm:px-6 flex flex-wrap items-center justify-between gap-3 text-white">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="speakText('Question 2. Write the missing letters.')">
+                    <span class="bg-white text-orange-600 w-10 h-10 rounded-2xl flex items-center justify-center font-black text-lg shadow shrink-0 en-text">Q2</span>
+                    <div>
+                        <h2 class="en-text text-xl sm:text-2xl font-extrabold tracking-wide">Write the missing letters</h2>
+                        <span dir="rtl" class="text-xs text-amber-100 font-bold block">اكتب الحرف أو الحرفين الناقصين في كل كلمة ثم اضغط على زر التحقق أو الاستماع • 14 درجة</span>
+                    </div>
+                </div>
+                <span class="bg-white/20 border border-white/35 px-3.5 py-1 rounded-full text-xs sm:text-sm font-extrabold">
+                    الدرجة: <span id="q2-score-badge" class="en-text text-yellow-200">0 / 14</span>
+                </span>
+            </div>
+
+            <div dir="ltr" class="p-5 sm:p-7 bg-gradient-to-b from-amber-50/30 to-white space-y-5">
+                <div id="q2-items-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    <!-- يتم توليد الكلمات الـ 14 برمجياً -->
+                </div>
+                <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+                    <button type="button" onclick="checkAllMissingLetters()" class="audio-btn bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-extrabold px-6 py-2.5 rounded-2xl shadow-md flex items-center gap-2 text-sm sm:text-base">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>تحقق من إجابات السؤال الثاني</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- السؤال الثالث (4 درجات): Put ✔ or ✘ -->
+        <!-- ========================================================= -->
+        <section class="bg-white rounded-3xl shadow-lg border-2 border-emerald-200 overflow-hidden">
+            <div dir="ltr" class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-4 sm:px-6 flex flex-wrap items-center justify-between gap-3 text-white">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="speakText('Question 3. Put true or false.')">
+                    <span class="bg-white text-emerald-700 w-10 h-10 rounded-2xl flex items-center justify-center font-black text-lg shadow shrink-0 en-text">Q3</span>
+                    <div>
+                        <h2 class="en-text text-xl sm:text-2xl font-extrabold tracking-wide">Put <span class="text-lime-200">✔</span> or <span class="text-rose-200">✘</span></h2>
+                        <span dir="rtl" class="text-xs text-emerald-100 font-bold block">انظر إلى الصورة واقرأ الجملة ثم اختر علامة صح (✔) أو خطأ (✘) • 4 درجات</span>
+                    </div>
+                </div>
+                <span class="bg-white/20 border border-white/35 px-3.5 py-1 rounded-full text-xs sm:text-sm font-extrabold">
+                    الدرجة: <span id="q3-score-badge" class="en-text text-yellow-200">0 / 4</span>
+                </span>
+            </div>
+
+            <div dir="ltr" class="p-5 sm:p-7 bg-gradient-to-b from-emerald-50/30 to-white">
+                <div id="q3-tf-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- يتم توليد الفقرات الأربع بالرسوم التوضيحية برمجياً -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- السؤال الرابع (14 درجة): Choose the correct answer -->
+        <!-- ========================================================= -->
+        <section class="bg-white rounded-3xl shadow-lg border-2 border-purple-200 overflow-hidden">
+            <div dir="ltr" class="bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-600 p-4 sm:px-6 flex flex-wrap items-center justify-between gap-3 text-white">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="speakText('Question 4. Choose the correct answer.')">
+                    <span class="bg-white text-purple-700 w-10 h-10 rounded-2xl flex items-center justify-center font-black text-lg shadow shrink-0 en-text">Q4</span>
+                    <div>
+                        <h2 class="en-text text-xl sm:text-2xl font-extrabold tracking-wide">Choose the correct answer</h2>
+                        <span dir="rtl" class="text-xs text-purple-100 font-bold block">اقرأ الجملة واختر الإجابة الصحيحة من بين الخيارات الثلاثة • 14 درجة</span>
+                    </div>
+                </div>
+                <span class="bg-white/20 border border-white/35 px-3.5 py-1 rounded-full text-xs sm:text-sm font-extrabold">
+                    الدرجة: <span id="q4-score-badge" class="en-text text-yellow-200">0 / 14</span>
+                </span>
+            </div>
+
+            <div dir="ltr" class="p-5 sm:p-7 bg-gradient-to-b from-purple-50/30 to-white">
+                <div id="q4-mcq-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- يتم توليد الأسئلة الـ 14 برمجياً -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- زر إنهاء الاختبار وعرض التقرير الشامل بمستوى الطالب -->
+        <!-- ========================================================= -->
+        <section class="text-center space-y-4 no-print">
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <button type="button" onclick="generateStudentReport()" class="audio-btn bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-black text-base sm:text-lg px-8 py-3.5 rounded-3xl shadow-xl flex items-center gap-3">
+                    <i class="fa-solid fa-award text-yellow-300 text-xl"></i>
+                    <span>إنهاء الاختبار وعرض تقرير مستوى الطالب</span>
+                </button>
+                <button type="button" onclick="resetEntireTest()" class="audio-btn bg-white hover:bg-rose-50 text-rose-700 border-2 border-rose-200 font-extrabold text-sm sm:text-base px-6 py-3.5 rounded-3xl shadow flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>إعادة الاختبار من البداية</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- قسم التقرير الشامل بمستوى الطالب (يظهر عند الضغط على إنهاء الاختبار) -->
+        <!-- ========================================================= -->
+        <section id="student-report-section" class="hidden bg-white rounded-3xl shadow-2xl border-4 border-amber-300 overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 p-6 text-white flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-3xl shadow-lg shrink-0">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-extrabold text-amber-300 uppercase tracking-wider en-text">Student Performance Report</span>
+                        <h2 class="text-xl sm:text-2xl font-black">تقرير مستوى الطالب والنتيجة النهائية</h2>
+                    </div>
+                </div>
+                <button type="button" onclick="window.print()" class="no-print audio-btn bg-white/15 hover:bg-white/25 text-white border border-white/30 px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>طباعة التقرير / حفظ PDF</span>
+                </button>
+            </div>
+
+            <div class="p-6 sm:p-8 space-y-6 bg-gradient-to-b from-amber-50/40 to-white">
+                <!-- بيانات الطالب والنتيجة العامة -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 text-center shadow-sm">
+                        <span class="text-xs font-bold text-slate-500 block">اسم الطالب / الطالبة</span>
+                        <p id="report-student-name" class="text-lg font-black text-slate-900 mt-1">بطل اللغة الإنجليزية</p>
+                        <span id="report-student-class" class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full inline-block mt-1">الصف الدراسي</span>
+                    </div>
+                    <div class="bg-white border-2 border-blue-200 rounded-2xl p-4 text-center shadow-sm">
+                        <span class="text-xs font-bold text-slate-500 block">الدرجة النهائية</span>
+                        <p id="report-total-score" class="en-text text-3xl font-black text-blue-700 mt-1">0 / 44</p>
+                        <span class="text-xs font-bold text-slate-500">مجموع درجات الاختبار</span>
+                    </div>
+                    <div class="bg-white border-2 border-emerald-200 rounded-2xl p-4 text-center shadow-sm">
+                        <span class="text-xs font-bold text-slate-500 block">النسبة المئوية</span>
+                        <p id="report-percentage" class="en-text text-3xl font-black text-emerald-600 mt-1">0%</p>
+                        <span class="text-xs font-bold text-emerald-700">نسبة الإتقان</span>
+                    </div>
+                    <div id="report-grade-card" class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 text-center shadow-sm">
+                        <span class="text-xs font-bold text-amber-800 block">التقدير العام</span>
+                        <p id="report-grade-title" class="text-xl font-black text-amber-900 mt-1">ممتاز</p>
+                        <span id="report-grade-stars" class="text-amber-500 text-sm mt-1 block">⭐⭐⭐⭐⭐</span>
+                    </div>
+                </div>
+
+                <!-- تحليل الأداء حسب المهارات والأسئلة الأربعة -->
+                <div class="bg-white border-2 border-slate-200 rounded-3xl p-5 space-y-4">
+                    <h3 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-indigo-600"></i>
+                        <span>تحليل الأداء التفصيلي لكل سؤال ومهارة:</span>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="report-breakdown-grid">
+                        <!-- يتم توليد بطاقات التحليل الأربعة هنا -->
+                    </div>
+                </div>
+
+                <!-- التوصية التربوية والتغذية الراجعة الختامية -->
+                <div id="report-feedback-box" class="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-5 flex items-start gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg shrink-0 mt-0.5">
+                        <i class="fa-solid fa-comment-dots"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="text-sm sm:text-base font-black text-emerald-950">ملاحظات وتوصيات المعلم:</h4>
+                        <p id="report-teacher-advice" class="text-xs sm:text-sm font-bold text-emerald-900 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- تذييل تعليمي -->
+    <footer class="max-w-6xl mx-auto px-4 pt-8 pb-4 text-center">
+        <div class="bg-white/85 border border-slate-200/80 rounded-2xl py-3 px-6 inline-flex flex-wrap items-center justify-center gap-3 shadow-sm text-xs sm:text-sm text-slate-600">
+            <span class="en-text font-extrabold text-teal-700 tracking-wide">LANGUA LEARN</span>
+            <span class="text-slate-300">•</span>
+            <span class="font-bold text-slate-700">جميع الحقوق محفوظة للأستاذ: ماجد سعد السويهري</span>
+        </div>
+    </footer>
+
+    <!-- ========================================================= -->
+    <!-- البرمجة التفاعلية للاختبار ونظام الصوت التعليمي الهادئ -->
+    <!-- ========================================================= -->
+    <script>
+        // =========================================================
+        // 1. بيانات السؤال الأول: السحب والإفلات (12 صورة كما في الورقة 1)
+        // =========================================================
+        const q1ItemsData = [
+            { id: 'key', word: 'key', ar: 'مفتاح' },
+            { id: 'screen', word: 'screen', ar: 'شاشة' },
+            { id: 'basement', word: 'basement', ar: 'قبو' },
+            { id: 'architect', word: 'architect', ar: 'مهندس معماري' },
+            { id: 'layout', word: 'layout', ar: 'تخطيط الشقة' },
+            { id: 'fridge', word: 'fridge', ar: 'ثلاجة' },
+            { id: 'materials', word: 'materials', ar: 'خامات وأدوات' },
+            { id: 'measurements', word: 'measurements', ar: 'قياسات' },
+            { id: 'wifi', word: 'Wi-Fi', ar: 'جهاز الإنترنت' },
+            { id: 'oven', word: 'oven', ar: 'فرن' },
+            { id: 'entrance', word: 'entrance', ar: 'مدخل' },
+            { id: 'gate', word: 'gate', ar: 'بوابة' }
+        ];
+
+        const q1BankOrder = [
+            'architect', 'layout', 'measurements', 'fridge', 'oven', 'key',
+            'entrance', 'gate', 'materials', 'basement', 'Wi-Fi', 'screen'
+        ];
+
+        let q1SolvedSet = new Set();
+        let selectedWordChip = null;
+
+        function getSvgForQ1(id) {
+            switch (id) {
+                case 'key':
+                    return `<svg viewBox="0 0 220 225" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <g transform="rotate(42 86 92)">
+                            <circle cx="86" cy="72" r="26" fill="#fef08a" stroke="#0f172a" stroke-width="4.5"/>
+                            <path d="M76,96 L76,174 L86,184 L96,174 L96,154 L90,148 L96,142 L96,132 L90,126 L96,120 L96,96 Z" fill="#fef08a" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                            <line x1="84" y1="104" x2="84" y2="174" stroke="#eab308" stroke-width="4"/>
+                        </g>
+                        <g transform="rotate(22 104 94)">
+                            <circle cx="104" cy="74" r="28" fill="#f59e0b" stroke="#0f172a" stroke-width="4.5"/>
+                            <path d="M93,100 L93,186 L104,196 L115,186 L115,100 Z" fill="#f59e0b" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                            <line x1="101" y1="106" x2="101" y2="188" stroke="#ea580c" stroke-width="4"/>
+                            <rect x="106" y="150" width="7" height="10" fill="#ea580c"/>
+                            <rect x="106" y="164" width="7" height="10" fill="#ea580c"/>
+                        </g>
+                        <g transform="rotate(-10 116 98)">
+                            <circle cx="116" cy="76" r="28" fill="#22c55e" stroke="#0f172a" stroke-width="4.5"/>
+                            <path d="M105,102 L105,146 L98,152 L105,158 L98,164 L105,170 L98,176 L105,182 L105,192 L116,202 L127,192 L127,102 Z" fill="#22c55e" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                            <line x1="115" y1="108" x2="115" y2="194" stroke="#15803d" stroke-width="4"/>
+                        </g>
+                        <g transform="rotate(-26 128 88)">
+                            <circle cx="128" cy="74" r="32" fill="#38bdf8" stroke="#0369a1" stroke-width="5"/>
+                            <path d="M116,104 L116,196 L128,208 L140,196 L140,104 Z" fill="#38bdf8" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                            <line x1="124" y1="110" x2="124" y2="198" stroke="#0284c7" stroke-width="4.5"/>
+                            <rect x="130" y="156" width="8" height="11" fill="#0369a1"/>
+                            <rect x="130" y="172" width="8" height="11" fill="#0369a1"/>
+                            <circle cx="124" cy="64" r="9" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+                        </g>
+                        <path d="M114,66 A28,28 0 1,1 132,48" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M114,66 A28,28 0 1,1 132,48" fill="none" stroke="#fef08a" stroke-width="3" stroke-linecap="round"/>
+                    </svg>`;
+                case 'screen':
+                    return `<svg viewBox="0 0 240 210" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <defs>
+                            <linearGradient id="nightSkyScreenTest" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#0f294a"/>
+                                <stop offset="55%" stop-color="#0284c7"/>
+                                <stop offset="100%" stop-color="#7dd3fc"/>
+                            </linearGradient>
+                            <linearGradient id="silverStandScreenTest" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#94a3b8"/>
+                                <stop offset="45%" stop-color="#f8fafc"/>
+                                <stop offset="100%" stop-color="#cbd5e1"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M96,158 L144,158 L152,186 L186,196 L54,196 L88,186 Z" fill="url(#silverStandScreenTest)" stroke="#64748b" stroke-width="1.5"/>
+                        <rect x="52" y="195" width="136" height="4" rx="2" fill="#64748b"/>
+                        <rect x="12" y="10" width="216" height="150" rx="8" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                        <rect x="15" y="13" width="210" height="118" rx="4" fill="#0f172a"/>
+                        <path d="M14,130 L226,130 L226,152 C226,156 223,158 218,158 L22,158 C17,158 14,156 14,152 Z" fill="#cbd5e1"/>
+                        <rect x="20" y="18" width="200" height="108" fill="url(#nightSkyScreenTest)"/>
+                        <circle cx="44" cy="34" r="1.2" fill="#ffffff"/>
+                        <circle cx="152" cy="28" r="1.2" fill="#ffffff"/>
+                        <circle cx="194" cy="32" r="1.2" fill="#ffffff"/>
+                        <circle cx="116" cy="48" r="1" fill="#ffffff"/>
+                        <g fill="#e2e8f0" opacity="0.9">
+                            <circle cx="76" cy="34" r="11"/>
+                            <circle cx="90" cy="32" r="14"/>
+                            <circle cx="104" cy="35" r="10"/>
+                            <circle cx="164" cy="60" r="10"/>
+                            <circle cx="178" cy="58" r="13"/>
+                            <circle cx="192" cy="61" r="9"/>
+                        </g>
+                        <path d="M20,100 Q65,112 115,104 Q168,112 220,98 L220,126 L20,126 Z" fill="#84cc16"/>
+                        <circle cx="38" cy="114" r="1.4" fill="#ffffff"/>
+                        <circle cx="72" cy="118" r="1.4" fill="#ffffff"/>
+                        <circle cx="122" cy="116" r="1.4" fill="#ffffff"/>
+                        <circle cx="176" cy="118" r="1.4" fill="#ffffff"/>
+                        <circle cx="204" cy="112" r="1.4" fill="#ffffff"/>
+                        <rect x="27" y="92" width="3" height="10" fill="#78350f"/>
+                        <circle cx="28" cy="82" r="11" fill="#a3e635"/>
+                        <rect x="49" y="96" width="3" height="10" fill="#78350f"/>
+                        <circle cx="50" cy="86" r="12" fill="#65a30d"/>
+                        <rect x="75" y="98" width="3" height="10" fill="#78350f"/>
+                        <circle cx="76" cy="88" r="11" fill="#4d7c0f"/>
+                        <rect x="161" y="96" width="3" height="10" fill="#78350f"/>
+                        <circle cx="162" cy="86" r="11" fill="#65a30d"/>
+                        <rect x="187" y="94" width="3" height="10" fill="#78350f"/>
+                        <circle cx="188" cy="84" r="12" fill="#4d7c0f"/>
+                        <rect x="210" y="90" width="3" height="10" fill="#78350f"/>
+                        <circle cx="211" cy="80" r="11" fill="#a3e635"/>
+                    </svg>`;
+                case 'basement':
+                    return `<svg viewBox="0 0 260 180" preserveAspectRatio="xMidYMid meet" class="w-full h-full rounded-xl">
+                        <rect x="0" y="28" width="260" height="122" fill="#475589"/>
+                        <polygon points="0,150 260,150 260,180 0,180" fill="#d99b66"/>
+                        <polygon points="0,0 260,0 236,30 24,30" fill="#9a441e" stroke="#451a03" stroke-width="1.5"/>
+                        <line x1="118" y1="30" x2="118" y2="48" stroke="#1e293b" stroke-width="2"/>
+                        <path d="M108,56 C108,48 128,48 128,56 L132,64 L104,64 Z" fill="#334155"/>
+                        <circle cx="118" cy="64" r="5" fill="#fef08a"/>
+                        <rect x="34" y="30" width="6" height="126" fill="#7c2d12"/>
+                        <rect x="92" y="30" width="6" height="126" fill="#7c2d12"/>
+                        <rect x="30" y="58" width="74" height="5" fill="#9a3412"/>
+                        <rect x="30" y="92" width="74" height="5" fill="#9a3412"/>
+                        <rect x="30" y="126" width="74" height="5" fill="#9a3412"/>
+                        <rect x="48" y="42" width="10" height="16" rx="2" fill="#38bdf8"/>
+                        <rect x="64" y="38" width="10" height="20" rx="2" fill="#f59e0b"/>
+                        <rect x="72" y="72" width="22" height="20" fill="#eab308"/>
+                        <rect x="46" y="106" width="14" height="20" rx="2" fill="#f97316"/>
+                        <rect x="64" y="104" width="14" height="22" rx="2" fill="#06b6d4"/>
+                        <rect x="0" y="74" width="38" height="82" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/>
+                        <rect x="4" y="132" width="42" height="44" fill="#fbbf24" stroke="#92400e" stroke-width="1.5"/>
+                        <rect x="118" y="72" width="26" height="34" rx="2" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
+                        <polygon points="131,80 123,96 139,96" fill="#ef4444" stroke="#fef08a" stroke-width="1.2"/>
+                        <polygon points="122,156 188,30 218,30 152,156" fill="#7c2d12"/>
+                        <polygon points="138,156 204,30 214,30 148,156" fill="#9a3412"/>
+                        <g fill="#b45309">
+                            <rect x="132" y="140" width="22" height="4"/>
+                            <rect x="140" y="124" width="22" height="4"/>
+                            <rect x="148" y="108" width="22" height="4"/>
+                            <rect x="156" y="92" width="22" height="4"/>
+                            <rect x="164" y="76" width="22" height="4"/>
+                            <rect x="172" y="60" width="22" height="4"/>
+                            <rect x="180" y="44" width="22" height="4"/>
+                        </g>
+                        <rect x="154" y="146" width="16" height="18" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+                        <path d="M154,146 L170,146 L166,156 L160,152 Z" fill="#facc15"/>
+                        <rect x="174" y="108" width="28" height="46" rx="2" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+                        <circle cx="188" cy="134" r="9" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+                        <rect x="204" y="108" width="28" height="46" rx="2" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+                        <circle cx="218" cy="134" r="9" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+                        <polygon points="228,124 248,124 245,158 231,158" fill="#16a34a" stroke="#14532d" stroke-width="1.5"/>
+                        <path d="M230,124 Q238,116 246,124" fill="#38bdf8"/>
+                    </svg>`;
+                case 'architect':
+                    return `<svg viewBox="0 0 220 265" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <ellipse cx="108" cy="252" rx="64" ry="8" fill="#cbd5e1"/>
+                        <polygon points="32,148 74,134 86,204 46,196" fill="#94a3b8" stroke="#0f172a" stroke-width="3" stroke-linejoin="round"/>
+                        <polygon points="40,152 68,143 78,195 52,189" fill="#64748b"/>
+                        <path d="M78,196 L138,196 L144,242 L122,242 L112,212 L96,242 L74,242 Z" fill="#4775a3" stroke="#0f172a" stroke-width="3" stroke-linejoin="round"/>
+                        <rect x="71" y="238" width="27" height="7" rx="3" fill="#3b638c" stroke="#0f172a" stroke-width="2.6"/>
+                        <rect x="120" y="238" width="27" height="7" rx="3" fill="#3b638c" stroke="#0f172a" stroke-width="2.6"/>
+                        <path d="M58,252 C58,242 74,238 94,242 L96,252 C84,256 64,256 58,252 Z" fill="#6b4423" stroke="#0f172a" stroke-width="3" stroke-linejoin="round"/>
+                        <path d="M122,242 C142,238 158,242 158,252 C152,256 132,256 120,252 Z" fill="#6b4423" stroke="#0f172a" stroke-width="3" stroke-linejoin="round"/>
+                        <path d="M62,126 C76,116 140,116 154,126 L168,176 L150,182 L144,154 L144,200 L72,200 L72,154 L66,182 L48,176 Z" fill="#4775a3" stroke="#0f172a" stroke-width="3" stroke-linejoin="round"/>
+                        <polygon points="90,118 126,118 114,162 102,162" fill="#ffffff" stroke="#0f172a" stroke-width="2.4"/>
+                        <polygon points="103,124 113,124 116,154 108,162 100,154" fill="#60a5fa" stroke="#0f172a" stroke-width="2.2"/>
+                        <polygon points="102,118 114,118 112,126 104,126" fill="#3b82f6" stroke="#0f172a" stroke-width="2"/>
+                        <path d="M88,118 L82,140 L94,144 L88,152 L108,166 L128,152 L122,144 L134,140 L128,118" fill="none" stroke="#0f172a" stroke-width="2.4" stroke-linejoin="round"/>
+                        <line x1="108" y1="166" x2="108" y2="200" stroke="#0f172a" stroke-width="2.6"/>
+                        <circle cx="114" cy="176" r="2.8" fill="#d97706" stroke="#0f172a" stroke-width="1.4"/>
+                        <path d="M48,174 C52,188 66,192 78,190 C82,186 80,178 72,176 L64,174 Z" fill="#f59e0b" stroke="#0f172a" stroke-width="2.6" stroke-linejoin="round"/>
+                        <polygon points="166,112 188,124 146,204 124,192" fill="#f1f5f9" stroke="#0f172a" stroke-width="2.8" stroke-linejoin="round"/>
+                        <ellipse cx="177" cy="118" rx="12" ry="7" transform="rotate(28 177 118)" fill="#94a3b8" stroke="#0f172a" stroke-width="2.6"/>
+                        <circle cx="177" cy="118" r="3.5" fill="#334155"/>
+                        <rect x="148" y="154" width="14" height="7" rx="3.5" transform="rotate(26 148 154)" fill="#f59e0b" stroke="#0f172a" stroke-width="2.2"/>
+                        <rect x="144" y="162" width="14" height="7" rx="3.5" transform="rotate(26 144 162)" fill="#f59e0b" stroke="#0f172a" stroke-width="2.2"/>
+                        <rect x="140" y="170" width="14" height="7" rx="3.5" transform="rotate(26 140 170)" fill="#f59e0b" stroke="#0f172a" stroke-width="2.2"/>
+                        <rect x="96" y="102" width="24" height="18" fill="#e7bc91" stroke="#0f172a" stroke-width="2.6"/>
+                        <ellipse cx="64" cy="76" rx="8" ry="12" fill="#f3cfa7" stroke="#0f172a" stroke-width="2.6"/>
+                        <ellipse cx="152" cy="76" rx="8" ry="12" fill="#f3cfa7" stroke="#0f172a" stroke-width="2.6"/>
+                        <path d="M68,48 C68,26 148,26 148,48 L148,84 C148,104 128,114 108,114 C88,114 68,104 68,84 Z" fill="#f3cfa7" stroke="#0f172a" stroke-width="2.8"/>
+                        <path d="M68,72 C74,74 78,82 80,90 C86,96 100,98 108,98 C116,98 130,96 136,90 C138,82 142,74 148,72 L148,86 C146,104 128,114 108,114 C88,114 70,104 68,86 Z" fill="#57534e" stroke="#0f172a" stroke-width="2.6" stroke-linejoin="round"/>
+                        <path d="M90,88 Q108,84 126,88 C124,100 116,104 108,104 C100,104 92,100 90,88 Z" fill="#ffffff" stroke="#0f172a" stroke-width="2.4" stroke-linejoin="round"/>
+                        <path d="M106,68 C114,68 118,74 114,78 C110,80 104,80 100,78" fill="none" stroke="#0f172a" stroke-width="2.4" stroke-linecap="round"/>
+                        <path d="M80,50 Q90,46 98,50" fill="none" stroke="#44403c" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M118,50 Q126,46 136,50" fill="none" stroke="#44403c" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="90" cy="62" r="9.5" fill="#ffffff" stroke="#0f172a" stroke-width="2.2"/>
+                        <circle cx="91" cy="62" r="5.5" fill="#1d4ed8"/>
+                        <circle cx="91" cy="62" r="3.5" fill="#0f172a"/>
+                        <circle cx="89" cy="60" r="1.8" fill="#ffffff"/>
+                        <circle cx="126" cy="62" r="9.5" fill="#ffffff" stroke="#0f172a" stroke-width="2.2"/>
+                        <circle cx="125" cy="62" r="5.5" fill="#1d4ed8"/>
+                        <circle cx="125" cy="62" r="3.5" fill="#0f172a"/>
+                        <circle cx="123" cy="60" r="1.8" fill="#ffffff"/>
+                        <path d="M62,48 C62,18 84,8 108,8 C132,8 154,18 154,48 Z" fill="#f59e0b" stroke="#0f172a" stroke-width="3"/>
+                        <path d="M96,8 L120,8 L124,38 L92,38 Z" fill="#fbbf24" stroke="#0f172a" stroke-width="2.4"/>
+                        <path d="M54,50 C74,36 142,36 162,50 L158,58 C138,44 78,44 58,58 Z" fill="#d97706" stroke="#0f172a" stroke-width="2.8" stroke-linejoin="round"/>
+                    </svg>`;
+                case 'layout':
+                    return `<svg viewBox="0 0 260 225" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <polygon points="14,68 74,34 128,64 68,98" fill="#99f6e4" stroke="#0f766e" stroke-width="1"/>
+                        <polygon points="14,68 74,34 74,78 14,112" fill="#0d9488"/>
+                        <polygon points="74,34 128,64 128,108 74,78" fill="#2dd4bf"/>
+                        <polygon points="34,62 56,50 56,74 34,86" fill="#e0f2fe" stroke="#0f172a" stroke-width="1.2"/>
+                        <line x1="45" y1="56" x2="45" y2="80" stroke="#475569" stroke-width="1"/>
+                        <polygon points="30,60 36,57 36,84 30,87" fill="#fef3c7"/>
+                        <polygon points="54,48 60,45 60,72 54,75" fill="#fef3c7"/>
+                        <polygon points="48,76 80,58 106,72 74,90" fill="#fbcfe8"/>
+                        <polygon points="68,46 84,37 94,43 78,52" fill="#b45309"/>
+                        <polygon points="68,46 78,52 78,74 68,68" fill="#92400e"/>
+                        <polygon points="78,52 94,43 94,65 78,74" fill="#d97706"/>
+                        <polygon points="72,82 102,65 120,75 90,92" fill="#84cc16" stroke="#3f6212" stroke-width="1.1"/>
+                        <polygon points="94,70 103,65 117,73 108,78" fill="#ffffff"/>
+                        <polygon points="72,82 90,92 90,100 72,90" fill="#9a3412"/>
+                        <polygon points="90,92 120,75 120,83 90,100" fill="#7c2d12"/>
+                        <polygon points="128,64 176,37 216,60 168,87" fill="#fed7aa" stroke="#ea580c" stroke-width="0.8"/>
+                        <polygon points="128,64 176,37 176,81 128,108" fill="#0284c7"/>
+                        <polygon points="176,37 216,60 216,104 176,81" fill="#38bdf8"/>
+                        <polygon points="142,64 156,56 156,74 142,82" fill="#e0f2fe" stroke="#0369a1" stroke-width="1"/>
+                        <polygon points="140,84 158,74 166,79 148,89" fill="#d6d3d1"/>
+                        <polygon points="140,84 148,89 148,99 140,94" fill="#78716c"/>
+                        <path d="M180,58 Q196,50 208,60 L208,98 L180,88 Z" fill="#7dd3fc" opacity="0.85" stroke="#0369a1" stroke-width="1.3"/>
+                        <ellipse cx="194" cy="59" rx="12" ry="5" fill="#bae6fd" stroke="#0284c7" stroke-width="1"/>
+                        <polygon points="44,142 128,94 168,117 84,165" fill="#fef08a" stroke="#eab308" stroke-width="0.8"/>
+                        <ellipse cx="106" cy="129" rx="22" ry="12" transform="rotate(-28 106 129)" fill="#fed7aa" stroke="#fb923c" stroke-width="1"/>
+                        <polygon points="44,98 70,83 70,127 44,142" fill="#84cc16"/>
+                        <polygon points="52,106 64,99 64,130 52,137" fill="#d97706" stroke="#78350f" stroke-width="1"/>
+                        <circle cx="80" cy="124" r="5" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+                        <circle cx="94" cy="116" r="5" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+                        <path d="M80,124 L87,115 L94,116 L86,123 Z" fill="none" stroke="#f97316" stroke-width="1.6"/>
+                        <polygon points="112,138 156,113 156,157 112,182" fill="#65a30d"/>
+                        <polygon points="136,134 150,126 150,160 136,168" fill="#d97706" stroke="#78350f" stroke-width="1"/>
+                        <polygon points="156,113 196,90 250,121 210,144" fill="#fbcfe8" stroke="#db2777" stroke-width="0.8"/>
+                        <polygon points="156,113 196,90 196,134 156,157" fill="#3730a3"/>
+                        <polygon points="196,90 250,121 250,165 196,134" fill="#1e3a8a"/>
+                        <polygon points="160,118 192,100 195,103 163,121" fill="#d97706"/>
+                        <polygon points="168,124 188,113 188,129 168,140" fill="#38bdf8" stroke="#0f172a" stroke-width="1.3"/>
+                        <polygon points="160,142 194,123 200,127 166,146" fill="#92400e"/>
+                        <polygon points="112,182 156,157 210,188 166,213" fill="#fef9c3" stroke="#eab308" stroke-width="0.8"/>
+                        <polygon points="156,157 196,134 250,165 210,188" fill="#fce7f3"/>
+                        <polygon points="202,168 238,147 246,153 210,174" fill="#94a3b8" stroke="#334155" stroke-width="1.2"/>
+                        <polygon points="202,168 210,174 210,183 202,177" fill="#64748b"/>
+                        <polygon points="210,174 246,153 246,162 210,183" fill="#475569"/>
+                        <ellipse cx="192" cy="158" rx="8" ry="4.5" fill="#b45309" stroke="#451a03" stroke-width="1"/>
+                        <line x1="192" y1="162" x2="192" y2="171" stroke="#451a03" stroke-width="2"/>
+                        <polygon points="128,176 168,199 168,208 128,185" fill="#e2e8f0" stroke="#64748b" stroke-width="1.2"/>
+                        <polygon points="128,176 135,172 175,195 168,199" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+                        <circle cx="32" cy="84" r="5" fill="#22c55e"/>
+                        <circle cx="72" cy="134" r="5" fill="#16a34a"/>
+                        <circle cx="178" cy="192" r="5.5" fill="#22c55e"/>
+                        <circle cx="222" cy="124" r="4.5" fill="#16a34a"/>
+                    </svg>`;
+                case 'fridge':
+                    return `<svg viewBox="0 0 230 225" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <defs>
+                            <linearGradient id="openBlueFridgeTest" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#93c5fd"/>
+                                <stop offset="50%" stop-color="#60a5fa"/>
+                                <stop offset="100%" stop-color="#3b82f6"/>
+                            </linearGradient>
+                            <linearGradient id="fridgeInsideLightTest" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#e0f2fe"/>
+                                <stop offset="100%" stop-color="#bae6fd"/>
+                            </linearGradient>
+                        </defs>
+                        <polygon points="18,204 66,218 158,204 120,192" fill="#cbd5e1"/>
+                        <polygon points="22,26 66,18 66,214 22,200" fill="url(#openBlueFridgeTest)" stroke="#1d4ed8" stroke-width="2" stroke-linejoin="round"/>
+                        <rect x="66" y="18" width="84" height="196" rx="4" fill="url(#openBlueFridgeTest)" stroke="#1d4ed8" stroke-width="2"/>
+                        <rect x="74" y="28" width="68" height="174" rx="3" fill="url(#fridgeInsideLightTest)" stroke="#38bdf8" stroke-width="1.5"/>
+                        <line x1="74" y1="68" x2="142" y2="68" stroke="#7dd3fc" stroke-width="3"/>
+                        <rect x="78" y="38" width="14" height="28" rx="2" fill="#22c55e" stroke="#15803d" stroke-width="1.2"/>
+                        <ellipse cx="116" cy="56" rx="14" ry="8" transform="rotate(-15 116 56)" fill="#ef4444"/>
+                        <ellipse cx="130" cy="58" rx="11" ry="7" fill="#dc2626"/>
+                        <line x1="74" y1="108" x2="142" y2="108" stroke="#7dd3fc" stroke-width="3"/>
+                        <rect x="88" y="80" width="22" height="26" rx="4" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+                        <rect x="116" y="84" width="18" height="22" rx="3" fill="#fde047" stroke="#ca8a04" stroke-width="1.2"/>
+                        <circle cx="112" cy="103" r="3.5" fill="#ef4444"/>
+                        <circle cx="120" cy="103" r="3.5" fill="#dc2626"/>
+                        <line x1="74" y1="146" x2="142" y2="146" stroke="#7dd3fc" stroke-width="3"/>
+                        <ellipse cx="92" cy="134" rx="15" ry="7" transform="rotate(24 92 134)" fill="#d6d3d1" stroke="#78716c" stroke-width="1.2"/>
+                        <ellipse cx="120" cy="134" rx="18" ry="10" fill="#22c55e"/>
+                        <rect x="78" y="152" width="60" height="46" rx="3" fill="#e0f2fe" opacity="0.7" stroke="#38bdf8" stroke-width="1.5"/>
+                        <rect x="82" y="168" width="12" height="28" rx="4" fill="#dc2626"/>
+                        <rect x="98" y="168" width="12" height="28" rx="4" fill="#ef4444"/>
+                        <circle cx="124" cy="186" r="10" fill="#f97316" stroke="#fef08a" stroke-width="2"/>
+                        <polygon points="150,24 206,30 206,204 150,210" fill="url(#openBlueFridgeTest)" stroke="#1d4ed8" stroke-width="2" stroke-linejoin="round"/>
+                        <rect x="156" y="34" width="42" height="164" rx="3" fill="#e0f2fe"/>
+                        <path d="M208,84 C216,102 216,132 208,150" fill="none" stroke="#60a5fa" stroke-width="5" stroke-linecap="round"/>
+                        <rect x="162" y="54" width="12" height="30" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-width="1.2"/>
+                        <rect x="180" y="58" width="12" height="26" rx="3" fill="#38bdf8"/>
+                        <rect x="154" y="76" width="46" height="10" rx="2" fill="#93c5fd" stroke="#2563eb" stroke-width="1.2"/>
+                        <rect x="164" y="104" width="11" height="22" rx="3" fill="#4ade80"/>
+                        <rect x="179" y="106" width="11" height="20" rx="3" fill="#22c55e"/>
+                        <rect x="154" y="120" width="46" height="10" rx="2" fill="#93c5fd" stroke="#2563eb" stroke-width="1.2"/>
+                        <rect x="166" y="148" width="16" height="28" rx="3" fill="#ef4444"/>
+                        <rect x="154" y="168" width="46" height="12" rx="2" fill="#93c5fd" stroke="#2563eb" stroke-width="1.2"/>
+                    </svg>`;
+                case 'materials':
+                    return `<svg viewBox="0 0 320 210" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <g transform="rotate(-22 44 106)">
+                            <rect x="34" y="54" width="20" height="114" rx="2" fill="#facc15" stroke="#1e293b" stroke-width="3"/>
+                            <line x1="40" y1="60" x2="40" y2="160" stroke="#eab308" stroke-width="2"/>
+                            <line x1="48" y1="60" x2="48" y2="160" stroke="#eab308" stroke-width="2"/>
+                            <polygon points="34,54 44,24 54,54" fill="#fde68a" stroke="#1e293b" stroke-width="3" stroke-linejoin="round"/>
+                            <polygon points="40,36 44,24 48,36" fill="#4c1d95" stroke="#1e293b" stroke-width="2"/>
+                        </g>
+                        <g transform="rotate(-26 42 150)">
+                            <rect x="24" y="106" width="38" height="74" rx="14" fill="#16a34a" stroke="#1e293b" stroke-width="3.2"/>
+                            <rect x="24" y="162" width="38" height="18" rx="6" fill="#bae6fd" stroke="#1e293b" stroke-width="3"/>
+                            <rect x="28" y="96" width="30" height="12" rx="4" fill="#38bdf8" stroke="#1e293b" stroke-width="2.8"/>
+                            <path d="M31,96 L31,82 C31,74 55,74 55,82 L55,96 Z" fill="#dc2626" stroke="#1e293b" stroke-width="3"/>
+                            <ellipse cx="35" cy="134" rx="4" ry="16" fill="#86efac" opacity="0.6"/>
+                        </g>
+                        <g transform="rotate(-11 102 82)">
+                            <rect x="86" y="18" width="32" height="44" rx="4" fill="#b47b56" stroke="#1e293b" stroke-width="3"/>
+                            <circle cx="102" cy="38" r="8" fill="#facc15" stroke="#1e293b" stroke-width="2"/>
+                            <polygon points="68,58 136,58 130,114 74,114" fill="#38bdf8" stroke="#1e293b" stroke-width="3.2" stroke-linejoin="round"/>
+                            <circle cx="88" cy="84" r="10" fill="#0284c7" stroke="#1e293b" stroke-width="2"/>
+                            <circle cx="114" cy="94" r="9" fill="#facc15" stroke="#1e293b" stroke-width="2"/>
+                            <circle cx="104" cy="70" r="4.5" fill="#f97316" stroke="#1e293b" stroke-width="1.6"/>
+                            <circle cx="122" cy="76" r="4.5" fill="#f43f5e" stroke="#1e293b" stroke-width="1.6"/>
+                        </g>
+                        <path d="M142,58 C142,42 152,34 156,30 L172,30 C176,34 186,42 186,58 L186,114 L142,114 Z" fill="#ffffff" stroke="#1e293b" stroke-width="3.2" stroke-linejoin="round"/>
+                        <rect x="142" y="58" width="44" height="56" fill="#ef4444" stroke="#1e293b" stroke-width="3.2"/>
+                        <rect x="155" y="14" width="18" height="16" rx="4" fill="#facc15" stroke="#1e293b" stroke-width="3"/>
+                        <path d="M146,74 L158,74 M146,84 L158,84 M146,94 L158,94" stroke="#991b1b" stroke-width="2.5" stroke-linecap="round"/>
+                        <rect x="196" y="74" width="42" height="52" rx="8" fill="#ffffff" stroke="#1e293b" stroke-width="3.2"/>
+                        <rect x="196" y="92" width="42" height="32" fill="#ef4444" stroke="#1e293b" stroke-width="2.6"/>
+                        <rect x="192" y="64" width="50" height="10" rx="4" fill="#cbd5e1" stroke="#1e293b" stroke-width="3"/>
+                        <path d="M210,64 L210,44 C210,36 224,36 224,44 L224,64 Z" fill="#64748b" stroke="#1e293b" stroke-width="3"/>
+                        <g transform="rotate(22 272 108)">
+                            <rect x="262" y="54" width="20" height="114" rx="2" fill="#ea580c" stroke="#1e293b" stroke-width="3"/>
+                            <line x1="274" y1="74" x2="282" y2="74" stroke="#1e293b" stroke-width="2"/>
+                            <line x1="274" y1="92" x2="282" y2="92" stroke="#1e293b" stroke-width="2"/>
+                            <polygon points="262,54 272,24 282,54" fill="#fde68a" stroke="#1e293b" stroke-width="3" stroke-linejoin="round"/>
+                            <polygon points="268,36 272,24 276,36" fill="#0284c7" stroke="#1e293b" stroke-width="2"/>
+                        </g>
+                        <rect x="242" y="62" width="9" height="132" rx="4.5" fill="#9a5632" stroke="#1e293b" stroke-width="2.8"/>
+                        <rect x="240" y="50" width="13" height="14" rx="2" fill="#bae6fd" stroke="#1e293b" stroke-width="2.6"/>
+                        <path d="M241,50 C234,40 236,24 246,16 C256,24 258,40 252,50 Z" fill="#facc15" stroke="#1e293b" stroke-width="2.8" stroke-linejoin="round"/>
+                        <rect x="74" y="112" width="156" height="82" rx="10" fill="#94a3b8" stroke="#1e293b" stroke-width="3.4"/>
+                        <rect x="76" y="114" width="24" height="26" fill="#ea580c" stroke="#1e293b" stroke-width="2"/>
+                        <rect x="100" y="114" width="24" height="26" fill="#84cc16" stroke="#1e293b" stroke-width="2"/>
+                        <rect x="124" y="114" width="24" height="26" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+                        <rect x="124" y="132" width="24" height="8" fill="#facc15"/>
+                        <rect x="148" y="114" width="24" height="26" fill="#fdba74" stroke="#1e293b" stroke-width="2"/>
+                        <rect x="148" y="132" width="24" height="8" fill="#ef4444"/>
+                        <rect x="172" y="114" width="24" height="26" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+                        <rect x="172" y="132" width="24" height="8" fill="#38bdf8"/>
+                        <rect x="196" y="114" width="24" height="26" fill="#22c55e" stroke="#1e293b" stroke-width="2"/>
+                        <ellipse cx="118" cy="166" rx="20" ry="10" fill="#0284c7" stroke="#1e293b" stroke-width="2.8"/>
+                        <ellipse cx="182" cy="166" rx="20" ry="10" fill="#0284c7" stroke="#1e293b" stroke-width="2.8"/>
+                        <rect x="204" y="136" width="36" height="58" rx="8" fill="#0d9488" stroke="#1e293b" stroke-width="3.2"/>
+                        <rect x="204" y="136" width="36" height="12" fill="#ffffff" stroke="#1e293b" stroke-width="2.4"/>
+                        <rect x="208" y="122" width="28" height="14" rx="3" fill="#ffffff" stroke="#1e293b" stroke-width="2.6"/>
+                        <rect x="210" y="110" width="24" height="12" rx="3" fill="#e11d48" stroke="#1e293b" stroke-width="2.6"/>
+                        <g transform="rotate(24 274 156)">
+                            <rect x="260" y="124" width="28" height="68" rx="8" fill="#facc15" stroke="#1e293b" stroke-width="3"/>
+                            <circle cx="274" cy="148" r="6" fill="#ea580c" stroke="#1e293b" stroke-width="2"/>
+                            <circle cx="274" cy="168" r="6" fill="#ea580c" stroke="#1e293b" stroke-width="2"/>
+                            <rect x="266" y="112" width="16" height="12" rx="2" fill="#0d9488" stroke="#1e293b" stroke-width="2.6"/>
+                            <rect x="272" y="80" width="4" height="32" rx="2" fill="#bae6fd" stroke="#1e293b" stroke-width="2"/>
+                        </g>
+                    </svg>`;
+                case 'measurements':
+                    return `<svg viewBox="0 0 250 225" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <defs>
+                            <linearGradient id="tapeYellowCaseTest" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#fde047"/>
+                                <stop offset="50%" stop-color="#facc15"/>
+                                <stop offset="100%" stop-color="#eab308"/>
+                            </linearGradient>
+                        </defs>
+                        <polygon points="118,136 142,126 226,162 206,182" fill="#fde047" stroke="#854d0e" stroke-width="1.8" stroke-linejoin="round"/>
+                        <g stroke="#1e293b" stroke-width="1.3">
+                            <line x1="138" y1="130" x2="132" y2="136"/>
+                            <line x1="152" y1="136" x2="146" y2="142"/>
+                            <line x1="166" y1="142" x2="160" y2="148"/>
+                            <line x1="180" y1="148" x2="174" y2="154"/>
+                            <line x1="194" y1="154" x2="188" y2="160"/>
+                            <line x1="208" y1="160" x2="202" y2="166"/>
+                        </g>
+                        <text x="136" y="148" font-size="10" font-weight="bold" fill="#0f172a" transform="rotate(22 136 148)" class="en-text">1</text>
+                        <text x="152" y="155" font-size="10" font-weight="bold" fill="#0f172a" transform="rotate(22 152 155)" class="en-text">2</text>
+                        <text x="168" y="162" font-size="10" font-weight="bold" fill="#0f172a" transform="rotate(22 168 162)" class="en-text">3</text>
+                        <text x="184" y="169" font-size="10" font-weight="bold" fill="#0f172a" transform="rotate(22 184 169)" class="en-text">4</text>
+                        <text x="200" y="176" font-size="10" font-weight="bold" fill="#0f172a" transform="rotate(22 200 176)" class="en-text">5</text>
+                        <polygon points="204,174 232,160 236,192 210,206" fill="#cbd5e1" stroke="#475569" stroke-width="2" stroke-linejoin="round"/>
+                        <circle cx="212" cy="172" r="3" fill="#64748b"/>
+                        <circle cx="222" cy="168" r="3" fill="#64748b"/>
+                        <path d="M22,94 C20,54 48,26 88,22 L114,26 C72,30 44,58 46,98 L46,136 L112,166 L142,150 L142,130 L154,124 L154,154 L112,178 L22,134 Z" fill="#334155" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+                        <path d="M36,96 C34,54 64,28 104,28 C134,28 154,52 156,88 L156,122 L114,142 L114,166 L36,130 Z" fill="url(#tapeYellowCaseTest)" stroke="#ca8a04" stroke-width="2" stroke-linejoin="round"/>
+                        <polygon points="118,72 146,64 156,84 126,96" fill="#334155" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round"/>
+                        <line x1="128" y1="78" x2="148" y2="72" stroke="#64748b" stroke-width="2"/>
+                        <line x1="130" y1="84" x2="150" y2="78" stroke="#64748b" stroke-width="2"/>
+                        <ellipse cx="64" cy="96" rx="34" ry="42" transform="rotate(-12 64 96)" fill="#334155" stroke="#0f172a" stroke-width="2.5"/>
+                        <ellipse cx="64" cy="96" rx="28" ry="35" transform="rotate(-12 64 96)" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+                        <text x="64" y="96" text-anchor="middle" font-size="22" font-weight="900" fill="#ffffff" class="en-text">5m</text>
+                        <text x="64" y="114" text-anchor="middle" font-size="12" font-weight="800" fill="#facc15" class="en-text">16ft</text>
+                    </svg>`;
+                case 'wifi':
+                    return `<svg viewBox="0 0 240 225" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <path d="M54,142 L58,28 C58,22 68,22 68,28 L72,142 Z" fill="#475569" stroke="#0f172a" stroke-width="3.6" stroke-linejoin="round"/>
+                        <line x1="61" y1="32" x2="59" y2="136" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M168,142 L172,28 C172,22 182,22 182,28 L186,142 Z" fill="#475569" stroke="#0f172a" stroke-width="3.6" stroke-linejoin="round"/>
+                        <line x1="175" y1="32" x2="173" y2="136" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+                        <circle cx="120" cy="112" r="11" fill="#84cc16" stroke="#0f172a" stroke-width="3.4"/>
+                        <path d="M98,94 Q120,76 142,94" fill="none" stroke="#f43f5e" stroke-width="6.5" stroke-linecap="round"/>
+                        <path d="M96,90 Q120,70 144,90" fill="none" stroke="#0f172a" stroke-width="2.6" stroke-linecap="round"/>
+                        <path d="M88,82 Q120,56 152,82" fill="none" stroke="#f43f5e" stroke-width="6.5" stroke-linecap="round"/>
+                        <path d="M86,78 Q120,50 154,78" fill="none" stroke="#0f172a" stroke-width="2.6" stroke-linecap="round"/>
+                        <path d="M78,68 Q120,34 162,68" fill="none" stroke="#0f172a" stroke-width="3.6" stroke-linecap="round"/>
+                        <rect x="34" y="194" width="172" height="10" rx="4" fill="#1e3a8a" stroke="#0f172a" stroke-width="3.2"/>
+                        <path d="M24,162 L40,142 C44,138 50,138 56,138 L184,138 C190,138 196,138 200,142 L216,162 Z" fill="#0ea5e9" stroke="#0f172a" stroke-width="3.6" stroke-linejoin="round"/>
+                        <line x1="52" y1="150" x2="68" y2="150" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                        <line x1="78" y1="150" x2="94" y2="150" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                        <line x1="104" y1="150" x2="120" y2="150" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                        <rect x="24" y="162" width="192" height="32" rx="10" fill="#64748b" stroke="#0f172a" stroke-width="3.6"/>
+                        <rect x="28" y="165" width="184" height="24" rx="8" fill="#94a3b8" opacity="0.45"/>
+                        <rect x="44" y="172" width="62" height="12" rx="3" fill="#1e293b" stroke="#0f172a" stroke-width="2.4"/>
+                        <rect x="50" y="175" width="14" height="6" rx="1.5" fill="#84cc16"/>
+                        <rect x="68" y="175" width="14" height="6" rx="1.5" fill="#84cc16"/>
+                        <rect x="86" y="175" width="14" height="6" rx="1.5" fill="#84cc16"/>
+                        <circle cx="164" cy="178" r="6" fill="#f59e0b" stroke="#0f172a" stroke-width="2.4"/>
+                        <circle cx="186" cy="178" r="6" fill="#ef4444" stroke="#0f172a" stroke-width="2.4"/>
+                    </svg>`;
+                case 'oven':
+                    return `<svg viewBox="0 0 240 215" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <polygon points="18,22 184,22 182,148 34,168 18,144" fill="#e2e8f0" stroke="#1e293b" stroke-width="2.6" stroke-linejoin="round"/>
+                        <rect x="34" y="32" width="150" height="24" fill="#cbd5e1" stroke="#1e293b" stroke-width="2.2"/>
+                        <circle cx="64" cy="44" r="7" fill="#64748b" stroke="#1e293b" stroke-width="2"/>
+                        <circle cx="114" cy="43" r="7" fill="#64748b" stroke="#1e293b" stroke-width="2"/>
+                        <circle cx="144" cy="42" r="6.5" fill="#64748b" stroke="#1e293b" stroke-width="2"/>
+                        <circle cx="164" cy="41" r="6.5" fill="#64748b" stroke="#1e293b" stroke-width="2"/>
+                        <rect x="44" y="62" width="128" height="72" fill="#475569" stroke="#1e293b" stroke-width="2.2"/>
+                        <line x1="48" y1="108" x2="168" y2="102" stroke="#cbd5e1" stroke-width="2.5"/>
+                        <ellipse cx="64" cy="96" rx="12" ry="15" transform="rotate(-24 64 96)" fill="#ea580c" stroke="#451a03" stroke-width="1.6"/>
+                        <ellipse cx="86" cy="95" rx="11" ry="14" transform="rotate(-24 86 95)" fill="#f97316" stroke="#451a03" stroke-width="1.6"/>
+                        <ellipse cx="106" cy="93" rx="11" ry="14" transform="rotate(-24 106 93)" fill="#ea580c" stroke="#451a03" stroke-width="1.6"/>
+                        <ellipse cx="126" cy="92" rx="11" ry="14" transform="rotate(-24 126 92)" fill="#f97316" stroke="#451a03" stroke-width="1.6"/>
+                        <ellipse cx="144" cy="90" rx="11" ry="14" transform="rotate(-24 144 90)" fill="#ea580c" stroke="#451a03" stroke-width="1.6"/>
+                        <polygon points="46,128 168,114 226,144 82,172" fill="#cbd5e1" stroke="#1e293b" stroke-width="2.4" stroke-linejoin="round"/>
+                        <polygon points="56,128 164,116 212,140 86,164" fill="#f8fafc" stroke="#334155" stroke-width="1.8" stroke-linejoin="round"/>
+                        <circle cx="76" cy="136" r="8" fill="#ef4444" stroke="#7f1d1d" stroke-width="1.4"/>
+                        <circle cx="92" cy="142" r="9" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.4"/>
+                        <ellipse cx="126" cy="140" rx="8" ry="11" fill="#65a30d" stroke="#1a2e05" stroke-width="1.4"/>
+                        <ellipse cx="144" cy="138" rx="9" ry="13" fill="#4d7c0f" stroke="#1a2e05" stroke-width="1.4"/>
+                        <ellipse cx="186" cy="138" rx="15" ry="9" fill="#65a30d" stroke="#1a2e05" stroke-width="1.4"/>
+                        <path d="M114,154 Q130,152 138,144" fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round"/>
+                        <polygon points="82,172 226,144 226,174 82,202" fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4" stroke-linejoin="round"/>
+                        <path d="M108,184 L208,164" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+                        <path d="M108,183 L208,163" stroke="#f8fafc" stroke-width="2" stroke-linecap="round"/>
+                    </svg>`;
+                case 'entrance':
+                    return `<svg viewBox="0 0 280 200" preserveAspectRatio="xMidYMid meet" class="w-full h-full rounded-xl">
+                        <rect x="0" y="0" width="280" height="125" fill="#ecfccb"/>
+                        <rect x="95" y="0" width="90" height="60" fill="#bae6fd"/>
+                        <circle cx="30" cy="36" r="44" fill="#84cc16"/>
+                        <circle cx="68" cy="44" r="36" fill="#65a30d"/>
+                        <circle cx="250" cy="36" r="44" fill="#84cc16"/>
+                        <circle cx="212" cy="44" r="36" fill="#65a30d"/>
+                        <path d="M12,140 L14,82 L-2,60 M14,82 L36,54" fill="none" stroke="#5c3a21" stroke-width="6" stroke-linecap="round"/>
+                        <path d="M268,140 L266,82 L282,60 M266,82 L244,54" fill="none" stroke="#5c3a21" stroke-width="6" stroke-linecap="round"/>
+                        <path d="M0,104 Q70,96 140,106 Q210,92 280,102 L280,130 L0,130 Z" fill="#bef264"/>
+                        <rect x="0" y="122" width="280" height="58" fill="#fcd34d"/>
+                        <rect x="0" y="176" width="280" height="24" fill="#d6d3d1"/>
+                        <g stroke="#334155" stroke-width="2">
+                            <line x1="0" y1="128" x2="78" y2="128"/>
+                            <line x1="0" y1="142" x2="78" y2="142"/>
+                            <line x1="16" y1="118" x2="16" y2="152"/>
+                            <line x1="36" y1="118" x2="36" y2="152"/>
+                            <line x1="56" y1="118" x2="56" y2="152"/>
+                            <line x1="202" y1="128" x2="280" y2="128"/>
+                            <line x1="202" y1="142" x2="280" y2="142"/>
+                            <line x1="224" y1="118" x2="224" y2="152"/>
+                            <line x1="244" y1="118" x2="244" y2="152"/>
+                            <line x1="264" y1="118" x2="264" y2="152"/>
+                        </g>
+                        <rect x="78" y="54" width="26" height="98" fill="#57534e" stroke="#292524" stroke-width="2"/>
+                        <rect x="74" y="44" width="34" height="12" fill="#78716c" stroke="#292524" stroke-width="2"/>
+                        <rect x="176" y="54" width="26" height="98" fill="#57534e" stroke="#292524" stroke-width="2"/>
+                        <rect x="172" y="44" width="34" height="12" fill="#78716c" stroke="#292524" stroke-width="2"/>
+                        <ellipse cx="91" cy="74" rx="7" ry="10" fill="#78716c"/>
+                        <ellipse cx="91" cy="102" rx="8" ry="11" fill="#78716c"/>
+                        <ellipse cx="91" cy="130" rx="7" ry="10" fill="#78716c"/>
+                        <ellipse cx="189" cy="74" rx="7" ry="10" fill="#78716c"/>
+                        <ellipse cx="189" cy="102" rx="8" ry="11" fill="#78716c"/>
+                        <ellipse cx="189" cy="130" rx="7" ry="10" fill="#78716c"/>
+                        <rect x="68" y="20" width="144" height="28" fill="#57534e" stroke="#292524" stroke-width="2"/>
+                        <polygon points="122,12 158,12 152,38 128,38" fill="#78716c" stroke="#292524" stroke-width="2"/>
+                        <circle cx="90" cy="34" r="8" fill="#78716c" stroke="#292524" stroke-width="1.5"/>
+                        <circle cx="190" cy="34" r="8" fill="#78716c" stroke="#292524" stroke-width="1.5"/>
+                        <rect x="46" y="138" width="10" height="20" fill="#1e293b"/>
+                        <line x1="51" y1="68" x2="51" y2="138" stroke="#1e293b" stroke-width="3.5"/>
+                        <circle cx="51" cy="60" r="8" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+                        <rect x="224" y="138" width="10" height="20" fill="#1e293b"/>
+                        <line x1="229" y1="68" x2="229" y2="138" stroke="#1e293b" stroke-width="3.5"/>
+                        <circle cx="229" cy="60" r="8" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+                    </svg>`;
+                case 'gate':
+                    return `<svg viewBox="0 0 240 215" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                        <rect x="14" y="68" width="38" height="126" fill="#c25934" stroke="#1c1917" stroke-width="2.5"/>
+                        <rect x="11" y="62" width="44" height="8" rx="2" fill="#ea580c" stroke="#1c1917" stroke-width="2.2"/>
+                        <rect x="10" y="192" width="46" height="10" rx="3" fill="#78716c" stroke="#1c1917" stroke-width="2.4"/>
+                        <path d="M14,82 L52,82 M14,96 L52,96 M14,110 L52,110 M14,124 L52,124 M14,138 L52,138 M14,152 L52,152 M14,166 L52,166 M14,180 L52,180" stroke="#7c2d12" stroke-width="1.5"/>
+                        <path d="M32,68 L32,82 M24,82 L24,96 M40,82 L40,96 M32,96 L32,110 M24,110 L24,124 M40,110 L40,124 M32,124 L32,138 M24,138 L24,152 M40,138 L40,152" stroke="#7c2d12" stroke-width="1.4"/>
+                        <rect x="24" y="54" width="18" height="8" fill="#57534e" stroke="#1c1917" stroke-width="2"/>
+                        <polygon points="22,30 44,30 40,54 26,54" fill="#fef3c7" stroke="#1c1917" stroke-width="2.2"/>
+                        <path d="M18,30 Q33,14 48,30 Z" fill="#78716c" stroke="#1c1917" stroke-width="2.2"/>
+                        <rect x="188" y="68" width="38" height="126" fill="#c25934" stroke="#1c1917" stroke-width="2.5"/>
+                        <rect x="185" y="62" width="44" height="8" rx="2" fill="#ea580c" stroke="#1c1917" stroke-width="2.2"/>
+                        <rect x="184" y="192" width="46" height="10" rx="3" fill="#78716c" stroke="#1c1917" stroke-width="2.4"/>
+                        <path d="M188,82 L226,82 M188,96 L226,96 M188,110 L226,110 M188,124 L226,124 M188,138 L226,138 M188,152 L226,152 M188,166 L226,166 M188,180 L226,180" stroke="#7c2d12" stroke-width="1.5"/>
+                        <path d="M206,68 L206,82 M198,82 L198,96 M214,82 L214,96 M206,96 L206,110 M198,110 L198,124 M214,110 L214,124 M206,124 L206,138 M198,138 L198,152 M214,138 L214,152" stroke="#7c2d12" stroke-width="1.4"/>
+                        <rect x="198" y="54" width="18" height="8" fill="#57534e" stroke="#1c1917" stroke-width="2"/>
+                        <polygon points="196,30 218,30 214,54 200,54" fill="#fef3c7" stroke="#1c1917" stroke-width="2.2"/>
+                        <path d="M192,30 Q207,14 222,30 Z" fill="#78716c" stroke="#1c1917" stroke-width="2.2"/>
+                        <path d="M56,82 C56,38 96,24 120,24 C144,24 184,38 184,82 L184,192 L56,192 Z" fill="none" stroke="#44403c" stroke-width="6"/>
+                        <path d="M62,84 C62,44 98,30 120,30 C142,30 178,44 178,84" fill="none" stroke="#1c1917" stroke-width="2.5"/>
+                        <circle cx="120" cy="18" r="4.5" fill="#57534e" stroke="#1c1917" stroke-width="2"/>
+                        <line x1="120" y1="24" x2="120" y2="192" stroke="#1c1917" stroke-width="4.5"/>
+                        <g stroke="#292524" stroke-width="2.2">
+                            <line x1="72" y1="54" x2="72" y2="162"/>
+                            <line x1="84" y1="42" x2="84" y2="162"/>
+                            <line x1="96" y1="35" x2="96" y2="162"/>
+                            <line x1="108" y1="31" x2="108" y2="162"/>
+                            <line x1="132" y1="31" x2="132" y2="162"/>
+                            <line x1="144" y1="35" x2="144" y2="162"/>
+                            <line x1="156" y1="42" x2="156" y2="162"/>
+                            <line x1="168" y1="54" x2="168" y2="162"/>
+                        </g>
+                        <rect x="58" y="162" width="124" height="30" fill="none" stroke="#44403c" stroke-width="4.5"/>
+                        <g fill="none" stroke="#292524" stroke-width="2.2">
+                            <rect x="66" y="168" width="8" height="18" rx="4"/>
+                            <rect x="78" y="168" width="8" height="18" rx="4"/>
+                            <rect x="90" y="168" width="8" height="18" rx="4"/>
+                            <rect x="102" y="168" width="8" height="18" rx="4"/>
+                            <rect x="130" y="168" width="8" height="18" rx="4"/>
+                            <rect x="142" y="168" width="8" height="18" rx="4"/>
+                            <rect x="154" y="168" width="8" height="18" rx="4"/>
+                            <rect x="166" y="168" width="8" height="18" rx="4"/>
+                        </g>
+                    </svg>`;
+                default:
+                    return '';
+            }
+        }
+
+        function initQ1DragAndDrop() {
+            const bankEl = document.getElementById('q1-word-bank');
+            const gridEl = document.getElementById('q1-cards-grid');
+            if (!bankEl || !gridEl) return;
+
+            bankEl.innerHTML = '';
+            q1BankOrder.forEach(wordStr => {
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.id = `chip-${wordStr}`;
+                chip.draggable = true;
+                chip.className = 'word-chip en-text px-4 py-2 rounded-2xl bg-white hover:bg-amber-50 border-2 border-indigo-300 text-slate-900 font-extrabold text-sm sm:text-base shadow-sm cursor-grab active:cursor-grabbing';
+                chip.textContent = wordStr;
+
+                chip.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', wordStr);
+                    chip.classList.add('dragging');
+                    selectWordChipForTap(wordStr);
+                });
+                chip.addEventListener('dragend', () => {
+                    chip.classList.remove('dragging');
+                });
+                chip.addEventListener('click', () => {
+                    selectWordChipForTap(wordStr);
+                });
+
+                bankEl.appendChild(chip);
+            });
+
+            gridEl.innerHTML = '';
+            q1ItemsData.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.id = `q1-card-${item.id}`;
+                card.className = 'drop-zone bg-white rounded-3xl border-2 border-slate-200 hover:border-blue-400 p-4 shadow-sm flex flex-col items-center justify-between gap-3 cursor-pointer';
+                card.innerHTML = `
+                    <div class="w-full flex items-center justify-between">
+                        <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-800 font-black text-xs flex items-center justify-center en-text">${idx + 1}</span>
+                        <button type="button" id="q1-audio-${item.id}" onclick="event.stopPropagation(); speakText('${item.word}')" class="hidden audio-btn w-7 h-7 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 flex items-center justify-center text-xs" title="استمع لنطق الكلمة">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                    <div class="w-36 h-24 flex items-center justify-center overflow-hidden">
+                        ${getSvgForQ1(item.id)}
+                    </div>
+                    <div id="q1-slot-${item.id}" class="w-full min-h-[44px] rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center px-3 py-1.5 text-center select-none">
+                        <span class="text-xs font-bold text-slate-400" dir="rtl">اسحب الكلمة هنا أو انقر</span>
+                    </div>
+                `;
+
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (!q1SolvedSet.has(item.id)) {
+                        card.classList.add('drag-over');
+                    }
+                });
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drag-over');
+                });
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    const droppedWord = e.dataTransfer.getData('text/plain');
+                    if (droppedWord) {
+                        attemptQ1Drop(item, droppedWord);
+                    }
+                });
+                card.addEventListener('click', () => {
+                    if (q1SolvedSet.has(item.id)) {
+                        speakText(item.word);
+                        return;
+                    }
+                    if (selectedWordChip) {
+                        attemptQ1Drop(item, selectedWordChip);
+                    } else {
+                        showToast('اختر كلمة من بنك الكلمات في الأعلى أولاً ثم انقر على الصورة!');
+                    }
+                });
+
+                gridEl.appendChild(card);
+            });
+        }
+
+        function selectWordChipForTap(wordStr) {
+            document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('selected-chip'));
+            if (selectedWordChip === wordStr) {
+                selectedWordChip = null;
+                return;
+            }
+            selectedWordChip = wordStr;
+            const chipEl = document.getElementById(`chip-${wordStr}`);
+            if (chipEl) chipEl.classList.add('selected-chip');
+        }
+
+        function attemptQ1Drop(targetItem, droppedWord) {
+            if (q1SolvedSet.has(targetItem.id)) return;
+            const cardEl = document.getElementById(`q1-card-${targetItem.id}`);
+            const slotEl = document.getElementById(`q1-slot-${targetItem.id}`);
+            if (!cardEl || !slotEl) return;
+
+            cardEl.classList.remove('shake');
+
+            if (droppedWord.toLowerCase() === targetItem.word.toLowerCase()) {
+                q1SolvedSet.add(targetItem.id);
+                cardEl.classList.remove('border-slate-200');
+                cardEl.classList.add('border-emerald-400', 'bg-emerald-50/40');
+                slotEl.className = 'w-full min-h-[44px] rounded-2xl border-2 border-emerald-500 bg-emerald-500 text-white flex items-center justify-center gap-2 px-3 py-1.5 shadow-sm';
+                slotEl.innerHTML = `<span class="en-text font-black text-lg">${targetItem.word}</span> <span class="text-xs bg-white/25 px-2 py-0.5 rounded-full" dir="rtl">${targetItem.ar} ✓</span>`;
+
+                const audioBtn = document.getElementById(`q1-audio-${targetItem.id}`);
+                if (audioBtn) audioBtn.classList.remove('hidden');
+
+                const chipEl = document.getElementById(`chip-${droppedWord}`);
+                if (chipEl) {
+                    chipEl.classList.add('hidden');
+                }
+                selectedWordChip = null;
+
+                updateOverallProgress();
+                speakText(`Correct! ${targetItem.word}!`);
+                showToast(`رائع! إجابة صحيحة: ${targetItem.word} (${targetItem.ar})`);
+            } else {
+                cardEl.classList.add('shake');
+                speakText(`Try again!`);
+                showToast(`كلمة (${droppedWord}) لا تطابق هذه الصورة. حاول مرة أخرى!`);
+            }
+        }
+
+        // =========================================================
+        // 2. بيانات السؤال الثاني: Write the missing letters (14 كلمة كما في الورقة 2)
+        // =========================================================
+        const q2ItemsData = [
+            { num: 1, before: 'des', missing: 'i', after: 'gn', full: 'design', ar: 'تصميم' },
+            { num: 2, before: 'Arc', missing: 'h', after: 'itect', full: 'Architect', ar: 'مهندس معماري' },
+            { num: 3, before: 'Mate', missing: 'r', after: 'ials', full: 'Materials', ar: 'خامات / أدوات' },
+            { num: 4, before: 'scr', missing: 'ee', after: 'n', full: 'screen', ar: 'شاشة' },
+            { num: 5, before: 'Tele', missing: 'ph', after: 'one', full: 'Telephone', ar: 'هاتف' },
+            { num: 6, before: 'Ov', missing: 'e', after: 'n', full: 'Oven', ar: 'فرن' },
+            { num: 7, before: 'Fri', missing: 'd', after: 'ge', full: 'Fridge', ar: 'ثلاجة' },
+            { num: 8, before: 'Base', missing: 'm', after: 'ent', full: 'Basement', ar: 'قبو' },
+            { num: 9, before: 'Wi-F', missing: 'i', after: '', full: 'Wi-Fi', ar: 'جهاز الإنترنت' },
+            { num: 10, before: 'G', missing: 'a', after: 'te', full: 'Gate', ar: 'بوابة' },
+            { num: 11, before: 'K', missing: 'e', after: 'y', full: 'Key', ar: 'مفتاح' },
+            { num: 12, before: 'Entra', missing: 'n', after: 'ce', full: 'Entrance', ar: 'مدخل' },
+            { num: 13, before: 'Meas', missing: 'u', after: 'rements', full: 'Measurements', ar: 'قياسات' },
+            { num: 14, before: 'La', missing: 'y', after: 'out', full: 'Layout', ar: 'تخطيط الشقة' }
+        ];
+
+        let q2SolvedSet = new Set();
+
+        function initQ2MissingLetters() {
+            const gridEl = document.getElementById('q2-items-grid');
+            if (!gridEl) return;
+            gridEl.innerHTML = '';
+
+            // ترتيب العرض في عمودين مطابق لترتيب الورقة (1-7 يسار و 8-14 يمين)
+            const orderedIndices = [0, 7, 1, 8, 2, 9, 3, 10, 4, 11, 5, 12, 6, 13];
+
+            orderedIndices.forEach(idx => {
+                const item = q2ItemsData[idx];
+                const inputWidth = item.missing.length > 1 ? 'w-12' : 'w-9';
+                const row = document.createElement('div');
+                row.id = `q2-row-${item.num}`;
+                row.className = 'bg-slate-50/80 hover:bg-white rounded-2xl border-2 border-slate-200 px-4 py-3 flex items-center justify-between gap-2 transition';
+                row.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-7 h-7 rounded-full bg-amber-500 text-white font-black text-xs flex items-center justify-center shrink-0 en-text">${item.num}</span>
+                        <div class="en-text text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center">
+                            <span>${item.before}</span>
+                            <input id="q2-input-${item.num}" type="text" maxlength="${item.missing.length}" autocomplete="off" spellcheck="false"
+                                oninput="handleQ2Input(${item.num})"
+                                onkeydown="if(event.key==='Enter') checkSingleQ2(${item.num})"
+                                class="${inputWidth} mx-0.5 text-center border-b-4 border-amber-500 bg-amber-50/80 focus:bg-white focus:border-blue-600 text-rose-600 font-black rounded-t-md focus:outline-none">
+                            <span>${item.after}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span dir="rtl" class="text-xs font-bold text-slate-500 hidden sm:inline">${item.ar}</span>
+                        <span id="q2-status-${item.num}" class="text-xs font-extrabold"></span>
+                        <button type="button" id="q2-audio-${item.num}" onclick="speakText('${item.full}')" class="hidden audio-btn w-8 h-8 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 flex items-center justify-center text-xs" title="استمع للكلمة">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                `;
+                gridEl.appendChild(row);
+            });
+        }
+
+        function handleQ2Input(num) {
+            const item = q2ItemsData.find(x => x.num === num);
+            const inp = document.getElementById(`q2-input-${num}`);
+            if (!item || !inp) return;
+            const val = inp.value.trim().toLowerCase();
+            if (val.length === item.missing.length) {
+                checkSingleQ2(num, true);
+            }
+        }
+
+        function checkSingleQ2(num, silentOnWrong = false) {
+            const item = q2ItemsData.find(x => x.num === num);
+            const inp = document.getElementById(`q2-input-${num}`);
+            const row = document.getElementById(`q2-row-${num}`);
+            const statusEl = document.getElementById(`q2-status-${num}`);
+            if (!item || !inp || !row) return;
+
+            const userVal = inp.value.trim().toLowerCase();
+            row.classList.remove('shake');
+
+            if (userVal === item.missing.toLowerCase()) {
+                q2SolvedSet.add(num);
+                inp.value = item.missing;
+                inp.disabled = true;
+                inp.classList.remove('border-amber-500', 'text-rose-600', 'bg-amber-50/80');
+                inp.classList.add('border-emerald-500', 'text-emerald-700', 'bg-emerald-50');
+                row.classList.remove('border-slate-200', 'border-rose-300');
+                row.classList.add('border-emerald-400', 'bg-emerald-50/40');
+                if (statusEl) statusEl.innerHTML = '<span class="text-emerald-600"><i class="fa-solid fa-circle-check"></i></span>';
+                const audioBtn = document.getElementById(`q2-audio-${num}`);
+                if (audioBtn) audioBtn.classList.remove('hidden');
+                updateOverallProgress();
+                speakText(item.full);
+            } else if (!silentOnWrong && userVal.length > 0) {
+                row.classList.add('shake', 'border-rose-300');
+                if (statusEl) statusEl.innerHTML = '<span class="text-rose-600"><i class="fa-solid fa-circle-xmark"></i></span>';
+            }
+        }
+
+        function checkAllMissingLetters() {
+            let newlySolved = 0;
+            q2ItemsData.forEach(item => {
+                if (!q2SolvedSet.has(item.num)) {
+                    const before = q2SolvedSet.size;
+                    checkSingleQ2(item.num, false);
+                    if (q2SolvedSet.size > before) newlySolved++;
+                }
+            });
+            if (q2SolvedSet.size === q2ItemsData.length) {
+                speakText('Excellent! All spelling words are correct!');
+                showToast('ممتاز! أكملت جميع حروف السؤال الثاني بنجاح!');
+            } else {
+                showToast(`تم تصحيح الإجابات! أكملت (${q2SolvedSet.size} من 14) كلمة.`);
+            }
+        }
+
+        // =========================================================
+        // 3. بيانات السؤال الثالث: Put ✔ or ✘ (4 فقرات كما في الورقة 2)
+        // =========================================================
+        const q3ItemsData = [
+            {
+                num: 1,
+                sentence: 'He is an architect.',
+                isTrue: false,
+                explanationAr: 'خطأ (✘) — الصورة لرجل إطفاء (firefighter) وليس مهندساً معمارياً.',
+                svg: `<svg viewBox="0 0 340 215" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                    <defs>
+                        <linearGradient id="fireFlameOuter1" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#dc2626"/>
+                            <stop offset="50%" stop-color="#f97316"/>
+                            <stop offset="100%" stop-color="#facc15"/>
+                        </linearGradient>
+                        <linearGradient id="fireFlameInner1" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#fb923c"/>
+                            <stop offset="55%" stop-color="#fde047"/>
+                            <stop offset="100%" stop-color="#fef9c3"/>
+                        </linearGradient>
+                        <linearGradient id="waterSprayGrad1" x1="1" y1="0.5" x2="0" y2="0.2">
+                            <stop offset="0%" stop-color="#0284c7"/>
+                            <stop offset="55%" stop-color="#38bdf8"/>
+                            <stop offset="100%" stop-color="#bae6fd"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- ألسنة اللهب البرتقالية والحمراء والصفراء في اليسار -->
+                    <path d="M10,204 C6,174 14,138 22,114 C18,90 22,62 32,42 C30,68 38,88 46,102 C44,72 52,44 68,26 C64,54 70,76 80,92 C82,66 92,42 106,32 C100,56 104,78 112,92 C118,68 128,54 138,48 C132,72 136,96 144,114 C154,136 164,172 164,204 Z" fill="url(#fireFlameOuter1)"/>
+                    <path d="M24,204 C22,180 28,152 38,132 C38,112 46,94 56,82 C54,104 62,120 70,132 C72,106 82,84 96,72 C92,96 98,114 106,126 C112,108 122,96 130,92 C126,114 132,136 140,152 C146,168 152,188 150,204 Z" fill="url(#fireFlameInner1)"/>
+                    <path d="M44,204 C44,186 52,166 64,152 C66,136 74,124 84,116 C82,134 88,148 96,158 C102,142 112,132 120,128 C118,146 124,166 132,182 C136,190 138,198 138,204 Z" fill="#fef9c3" opacity="0.88"/>
+
+                    <!-- رذاذ وتدفق المياه الزرقاء المندفعة من الفوهة نحو النار -->
+                    <path d="M188,92 L106,42 C96,34 94,20 104,16 C112,14 118,24 122,34 C122,20 128,12 136,14 C144,16 144,28 140,40 C148,28 156,22 164,26 C170,30 166,42 156,52 C166,46 176,44 180,50 C184,56 174,66 162,72 C172,70 180,72 180,78 C180,84 168,88 154,88 L188,94 Z" fill="url(#waterSprayGrad1)" stroke="#0369a1" stroke-width="1.8" stroke-linejoin="round"/>
+                    <!-- قطرات وخطوط رغوة المياه الفاتحة -->
+                    <path d="M174,90 L114,48 M172,88 L128,28 M170,86 L152,36 M168,90 L166,60" stroke="#e0f2fe" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M84,56 C76,56 72,64 78,70 C84,74 96,68 94,60 C92,56 88,56 84,56 Z" fill="#7dd3fc" stroke="#0369a1" stroke-width="1.5"/>
+                    <path d="M74,82 C66,84 64,92 72,96 C80,98 88,90 84,84 C82,81 78,81 74,82 Z" fill="#bae6fd" stroke="#0369a1" stroke-width="1.5"/>
+                    <ellipse cx="146" cy="20" rx="3.5" ry="7" transform="rotate(24 146 20)" fill="#7dd3fc" stroke="#0369a1" stroke-width="1.3"/>
+                    <ellipse cx="164" cy="104" rx="7" ry="3" transform="rotate(-18 164 104)" fill="#7dd3fc" stroke="#0369a1" stroke-width="1.3"/>
+                    <ellipse cx="174" cy="116" rx="6" ry="2.8" transform="rotate(-26 174 116)" fill="#bae6fd" stroke="#0369a1" stroke-width="1.3"/>
+
+                    <!-- الخرطوم الأسود الملتف خلف رجل الإطفاء -->
+                    <path d="M188,93 L252,116 C284,130 298,176 318,186 C332,192 338,182 330,174 C322,166 306,172 308,184 C310,196 334,196 336,182 C338,166 314,160 302,174 C290,188 308,204 328,198" fill="none" stroke="#1e293b" stroke-width="6.5" stroke-linecap="round"/>
+                    <path d="M192,94 L250,115 C282,129 296,175 316,185" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round"/>
+                    <!-- فوهة الخرطوم المعدنية -->
+                    <polygon points="184,90 198,94 196,99 183,94" fill="#64748b" stroke="#0f172a" stroke-width="1.5"/>
+
+                    <!-- الساق الخلفية (اليسرى) والحذاء البرتقالي -->
+                    <path d="M254,142 L266,184 L282,180 L272,140 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.8" stroke-linejoin="round"/>
+                    <polygon points="262,168 278,164 281,174 265,178" fill="#ef4444"/>
+                    <polygon points="263,172 279,168 280,171 264,175" fill="#cbd5e1"/>
+                    <path d="M266,184 L282,180 L286,192 C282,196 272,202 260,202 C254,202 254,196 260,192 Z" fill="#ea580c" stroke="#7c2d12" stroke-width="1.8" stroke-linejoin="round"/>
+
+                    <!-- الساق الأمامية (اليمنى) والحذاء البرتقالي -->
+                    <path d="M234,142 L234,190 L250,190 L252,142 Z" fill="#fde047" stroke="#ca8a04" stroke-width="1.8" stroke-linejoin="round"/>
+                    <rect x="234" y="172" width="16" height="10" fill="#ef4444"/>
+                    <rect x="234" y="175" width="16" height="3.5" fill="#cbd5e1"/>
+                    <path d="M234,190 L250,190 L250,202 C240,204 222,204 218,198 C216,194 224,190 234,190 Z" fill="#ea580c" stroke="#7c2d12" stroke-width="1.8" stroke-linejoin="round"/>
+
+                    <!-- الذراع الخلفية اليسرى والقفاز البرتقالي الممسك بالخرطوم -->
+                    <path d="M234,88 L210,100 L198,94 L202,86 L214,90 L232,80 Z" fill="#fde047" stroke="#ca8a04" stroke-width="1.6" stroke-linejoin="round"/>
+                    <circle cx="198" cy="96" r="6" fill="#ea580c" stroke="#7c2d12" stroke-width="1.6"/>
+
+                    <!-- سترة رجل الإطفاء الصفراء بالأشرطة الحمراء والفضية العاكسة -->
+                    <path d="M232,78 C242,74 262,74 268,84 L274,142 L230,142 L232,88 Z" fill="#fde047" stroke="#ca8a04" stroke-width="1.8" stroke-linejoin="round"/>
+                    <!-- الشريط الأحمر والفضي على الصدر والأسفل -->
+                    <rect x="231" y="96" width="39" height="11" fill="#ef4444"/>
+                    <rect x="231" y="100" width="39" height="3.5" fill="#e2e8f0"/>
+                    <rect x="230" y="128" width="44" height="9" fill="#ef4444"/>
+                    <rect x="230" y="131" width="44" height="3" fill="#e2e8f0"/>
+
+                    <!-- الذراع الأمامية اليمنى والقفاز البرتقالي -->
+                    <path d="M254,86 L266,118 L242,114 L240,106 L254,108 L246,88 Z" fill="#fef08a" stroke="#ca8a04" stroke-width="1.6" stroke-linejoin="round"/>
+                    <polygon points="246,106 254,107 252,116 244,115" fill="#ef4444"/>
+                    <circle cx="240" cy="110" r="6.5" fill="#ea580c" stroke="#7c2d12" stroke-width="1.6"/>
+
+                    <!-- رأس رجل الإطفاء والوجه الجانبي -->
+                    <path d="M232,46 C232,32 264,32 266,48 C268,64 256,78 242,76 C234,74 230,66 230,58 L226,54 L230,50 Z" fill="#fed7aa" stroke="#9a3412" stroke-width="1.6" stroke-linejoin="round"/>
+                    <!-- الشعر الداكن الجانبي -->
+                    <path d="M252,38 C264,40 272,50 268,64 C262,68 256,66 254,60 L256,52 L248,50 Z" fill="#334155"/>
+                    <!-- العين والحاجب والابتسامة -->
+                    <path d="M236,46 Q240,43 244,46" fill="none" stroke="#1e293b" stroke-width="1.6" stroke-linecap="round"/>
+                    <ellipse cx="240" cy="51" rx="2.5" ry="3.5" fill="#ffffff" stroke="#1e293b" stroke-width="1.2"/>
+                    <circle cx="239.5" cy="51" r="1.8" fill="#0f172a"/>
+                    <path d="M232,63 Q236,66 240,63" fill="none" stroke="#9a3412" stroke-width="1.5" stroke-linecap="round"/>
+
+                    <!-- خوذة رجل الإطفاء الصفراء ذات المقدمة الحمراء -->
+                    <path d="M226,38 C228,18 248,12 264,20 C276,26 280,44 278,60 C284,64 288,68 284,70 C274,70 262,62 252,50 C242,44 232,40 226,38 Z" fill="#facc15" stroke="#a16207" stroke-width="1.8" stroke-linejoin="round"/>
+                    <!-- الواجهة الحمراء للخوذة -->
+                    <path d="M224,38 C226,24 236,16 246,16 C244,26 242,36 244,46 C236,44 228,40 224,38 Z" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.6" stroke-linejoin="round"/>
+
+                    <!-- القناع الواقي الشفاف المزرق على الوجه -->
+                    <path d="M226,38 L246,46 L244,74 L224,68 C218,64 218,44 226,38 Z" fill="#bae6fd" fill-opacity="0.48" stroke="#0284c7" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M226,44 L224,62" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+                </svg>`
+            },
+            {
+                num: 3,
+                sentence: 'It is a simple layout.',
+                isTrue: true,
+                explanationAr: 'صح (✔) — هذا مخطط هندسي للشقة (layout).',
+                svg: `<svg viewBox="0 0 260 225" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                    <polygon points="14,68 74,34 128,64 68,98" fill="#99f6e4" stroke="#0f766e" stroke-width="1"/>
+                    <polygon points="14,68 74,34 74,78 14,112" fill="#0d9488"/>
+                    <polygon points="74,34 128,64 128,108 74,78" fill="#2dd4bf"/>
+                    <polygon points="34,62 56,50 56,74 34,86" fill="#e0f2fe" stroke="#0f172a" stroke-width="1.2"/>
+                    <line x1="45" y1="56" x2="45" y2="80" stroke="#475569" stroke-width="1"/>
+                    <polygon points="30,60 36,57 36,84 30,87" fill="#fef3c7"/>
+                    <polygon points="54,48 60,45 60,72 54,75" fill="#fef3c7"/>
+                    <polygon points="48,76 80,58 106,72 74,90" fill="#fbcfe8"/>
+                    <polygon points="68,46 84,37 94,43 78,52" fill="#b45309"/>
+                    <polygon points="68,46 78,52 78,74 68,68" fill="#92400e"/>
+                    <polygon points="78,52 94,43 94,65 78,74" fill="#d97706"/>
+                    <polygon points="72,82 102,65 120,75 90,92" fill="#84cc16" stroke="#3f6212" stroke-width="1.1"/>
+                    <polygon points="94,70 103,65 117,73 108,78" fill="#ffffff"/>
+                    <polygon points="72,82 90,92 90,100 72,90" fill="#9a3412"/>
+                    <polygon points="90,92 120,75 120,83 90,100" fill="#7c2d12"/>
+                    <polygon points="128,64 176,37 216,60 168,87" fill="#fed7aa" stroke="#ea580c" stroke-width="0.8"/>
+                    <polygon points="128,64 176,37 176,81 128,108" fill="#0284c7"/>
+                    <polygon points="176,37 216,60 216,104 176,81" fill="#38bdf8"/>
+                    <polygon points="142,64 156,56 156,74 142,82" fill="#e0f2fe" stroke="#0369a1" stroke-width="1"/>
+                    <polygon points="140,84 158,74 166,79 148,89" fill="#d6d3d1"/>
+                    <polygon points="140,84 148,89 148,99 140,94" fill="#78716c"/>
+                    <path d="M180,58 Q196,50 208,60 L208,98 L180,88 Z" fill="#7dd3fc" opacity="0.85" stroke="#0369a1" stroke-width="1.3"/>
+                    <ellipse cx="194" cy="59" rx="12" ry="5" fill="#bae6fd" stroke="#0284c7" stroke-width="1"/>
+                    <polygon points="44,142 128,94 168,117 84,165" fill="#fef08a" stroke="#eab308" stroke-width="0.8"/>
+                    <ellipse cx="106" cy="129" rx="22" ry="12" transform="rotate(-28 106 129)" fill="#fed7aa" stroke="#fb923c" stroke-width="1"/>
+                    <polygon points="44,98 70,83 70,127 44,142" fill="#84cc16"/>
+                    <polygon points="52,106 64,99 64,130 52,137" fill="#d97706" stroke="#78350f" stroke-width="1"/>
+                    <circle cx="80" cy="124" r="5" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+                    <circle cx="94" cy="116" r="5" fill="none" stroke="#1e293b" stroke-width="1.5"/>
+                    <path d="M80,124 L87,115 L94,116 L86,123 Z" fill="none" stroke="#f97316" stroke-width="1.6"/>
+                    <polygon points="112,138 156,113 156,157 112,182" fill="#65a30d"/>
+                    <polygon points="136,134 150,126 150,160 136,168" fill="#d97706" stroke="#78350f" stroke-width="1"/>
+                    <polygon points="156,113 196,90 250,121 210,144" fill="#fbcfe8" stroke="#db2777" stroke-width="0.8"/>
+                    <polygon points="156,113 196,90 196,134 156,157" fill="#3730a3"/>
+                    <polygon points="196,90 250,121 250,165 196,134" fill="#1e3a8a"/>
+                    <polygon points="160,118 192,100 195,103 163,121" fill="#d97706"/>
+                    <polygon points="168,124 188,113 188,129 168,140" fill="#38bdf8" stroke="#0f172a" stroke-width="1.3"/>
+                    <polygon points="160,142 194,123 200,127 166,146" fill="#92400e"/>
+                    <polygon points="112,182 156,157 210,188 166,213" fill="#fef9c3" stroke="#eab308" stroke-width="0.8"/>
+                    <polygon points="156,157 196,134 250,165 210,188" fill="#fce7f3"/>
+                    <polygon points="202,168 238,147 246,153 210,174" fill="#94a3b8" stroke="#334155" stroke-width="1.2"/>
+                    <polygon points="202,168 210,174 210,183 202,177" fill="#64748b"/>
+                    <polygon points="210,174 246,153 246,162 210,183" fill="#475569"/>
+                    <ellipse cx="192" cy="158" rx="8" ry="4.5" fill="#b45309" stroke="#451a03" stroke-width="1"/>
+                    <line x1="192" y1="162" x2="192" y2="171" stroke="#451a03" stroke-width="2"/>
+                    <polygon points="128,176 168,199 168,208 128,185" fill="#e2e8f0" stroke="#64748b" stroke-width="1.2"/>
+                    <polygon points="128,176 135,172 175,195 168,199" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+                    <circle cx="32" cy="84" r="5" fill="#22c55e"/>
+                    <circle cx="72" cy="134" r="5" fill="#16a34a"/>
+                    <circle cx="178" cy="192" r="5.5" fill="#22c55e"/>
+                    <circle cx="222" cy="124" r="4.5" fill="#16a34a"/>
+                </svg>`
+            },
+            {
+                num: 2,
+                sentence: 'We have an oven and a fridge.',
+                isTrue: true,
+                explanationAr: 'صح (✔) — الصورة تعرض ثلاجة (fridge) وفرناً (oven).',
+                svg: `<svg viewBox="0 0 320 205" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                    <!-- 1. الثلاجة السماوية المفتوحة المليئة بالأطعمة على اليسار -->
+                    <g>
+                        <!-- أرجل الثلاجة -->
+                        <ellipse cx="44" cy="186" rx="6" ry="3.5" fill="#7c2d12" stroke="#1e293b" stroke-width="1.6"/>
+                        <ellipse cx="114" cy="186" rx="6" ry="3.5" fill="#7c2d12" stroke="#1e293b" stroke-width="1.6"/>
+
+                        <!-- الجانب الأيسر للثلاجة السماوية والنافذة الجانبية -->
+                        <path d="M18,28 C18,18 32,12 46,12 L46,184 L22,180 C19,179 18,175 18,170 Z" fill="#38bdf8" stroke="#1e293b" stroke-width="2.2" stroke-linejoin="round"/>
+                        <path d="M22,30 L42,26 L42,174 L22,170 Z" fill="#7dd3fc" opacity="0.55"/>
+                        <rect x="30" y="54" width="10" height="24" rx="2" fill="#e0f2fe" stroke="#1e293b" stroke-width="1.6"/>
+                        <circle cx="35" cy="70" r="3.5" fill="#84cc16"/>
+
+                        <!-- جسم الثلاجة الرئيسي والتجويف الداخلي -->
+                        <path d="M46,12 C72,10 104,13 122,19 L122,184 L46,184 Z" fill="#38bdf8" stroke="#1e293b" stroke-width="2.2" stroke-linejoin="round"/>
+                        <rect x="52" y="24" width="64" height="152" rx="3" fill="#0284c7" stroke="#1e293b" stroke-width="1.8"/>
+                        <rect x="55" y="27" width="58" height="146" fill="#0369a1"/>
+
+                        <!-- الرف الأول: حليب، فراولة، ومرطبان مربى -->
+                        <line x1="55" y1="62" x2="113" y2="62" stroke="#bae6fd" stroke-width="2.5"/>
+                        <rect x="58" y="36" width="14" height="24" rx="2" fill="#f8fafc" stroke="#1e293b" stroke-width="1.4"/>
+                        <rect x="58" y="32" width="14" height="5" rx="1" fill="#f97316" stroke="#1e293b" stroke-width="1.2"/>
+                        <path d="M62,42 L67,42 L67,56 L62,56 Z" fill="#1e293b"/>
+                        <circle cx="78" cy="40" r="5" fill="#ef4444"/>
+                        <rect x="85" y="34" width="18" height="16" rx="2" fill="#f59e0b" stroke="#1e293b" stroke-width="1.3"/>
+                        <rect x="85" y="31" width="18" height="4" fill="#ef4444" stroke="#1e293b" stroke-width="1.1"/>
+                        <circle cx="107" cy="46" r="5" fill="#facc15" stroke="#1e293b" stroke-width="1.2"/>
+
+                        <!-- الرف الثاني: مرطبان حبوب ومانجو/قرع برتقالي -->
+                        <line x1="55" y1="88" x2="113" y2="88" stroke="#bae6fd" stroke-width="2.5"/>
+                        <rect x="64" y="68" width="18" height="18" rx="3" fill="#fda4af" stroke="#1e293b" stroke-width="1.4"/>
+                        <rect x="63" y="65" width="20" height="4" fill="#cbd5e1" stroke="#1e293b" stroke-width="1.2"/>
+                        <ellipse cx="98" cy="76" rx="12" ry="8" transform="rotate(-18 98 76)" fill="#ea580c" stroke="#1e293b" stroke-width="1.4"/>
+
+                        <!-- الرف الثالث: فواكه صفراء وحمراء وخضروات -->
+                        <line x1="55" y1="114" x2="113" y2="114" stroke="#bae6fd" stroke-width="2.5"/>
+                        <ellipse cx="74" cy="100" rx="14" ry="7" transform="rotate(-24 74 100)" fill="#facc15" stroke="#1e293b" stroke-width="1.3"/>
+                        <ellipse cx="88" cy="104" rx="11" ry="7" fill="#f59e0b" stroke="#1e293b" stroke-width="1.3"/>
+                        <circle cx="104" cy="104" r="7" fill="#dc2626" stroke="#1e293b" stroke-width="1.3"/>
+                        <path d="M100,97 L104,93 L108,97 Z" fill="#22c55e"/>
+
+                        <!-- الرف الرابع: مرطبان أخضر، طماطم، وكرز -->
+                        <line x1="55" y1="142" x2="113" y2="142" stroke="#bae6fd" stroke-width="2.5"/>
+                        <rect x="59" y="122" width="13" height="18" rx="2" fill="#65a30d" stroke="#1e293b" stroke-width="1.3"/>
+                        <circle cx="86" cy="130" r="8" fill="#dc2626" stroke="#1e293b" stroke-width="1.3"/>
+                        <path d="M82,122 L86,117 L90,122 Z" fill="#16a34a"/>
+                        <circle cx="102" cy="133" r="6" fill="#ef4444" stroke="#1e293b" stroke-width="1.3"/>
+                        <path d="M102,127 L105,120" stroke="#15803d" stroke-width="1.5"/>
+
+                        <!-- الدرج السفلي: خس أخضر، شرائح ليمون، وتوت -->
+                        <path d="M58,154 L84,146 L94,162 L62,170 Z" fill="#65a30d" stroke="#1e293b" stroke-width="1.4"/>
+                        <circle cx="86" cy="160" r="6" fill="#fde047" stroke="#1e293b" stroke-width="1.2"/>
+                        <circle cx="86" cy="168" r="6" fill="#facc15" stroke="#1e293b" stroke-width="1.2"/>
+                        <circle cx="102" cy="165" r="9" fill="#e11d48" stroke="#1e293b" stroke-width="1.3"/>
+
+                        <!-- باب الثلاجة المفتوح على اليمين ومحتوياته -->
+                        <polygon points="122,22 168,18 168,194 122,184" fill="#38bdf8" stroke="#1e293b" stroke-width="2.2" stroke-linejoin="round"/>
+                        <polygon points="126,28 162,25 162,186 126,178" fill="#7dd3fc" stroke="#1e293b" stroke-width="1.5"/>
+                        <!-- مقبض باب الثلاجة -->
+                        <path d="M168,68 C176,78 176,102 168,112" fill="none" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+                        <path d="M168,68 C176,78 176,102 168,112" fill="none" stroke="#1e293b" stroke-width="1.8" stroke-linecap="round"/>
+
+                        <!-- رفوف باب الثلاجة الأربعة -->
+                        <rect x="132" y="34" width="12" height="18" rx="2" fill="#f97316" stroke="#1e293b" stroke-width="1.2"/>
+                        <rect x="145" y="38" width="13" height="14" rx="2" fill="#dcfce7" stroke="#1e293b" stroke-width="1.2"/>
+                        <line x1="126" y1="52" x2="162" y2="52" stroke="#1e293b" stroke-width="2"/>
+
+                        <path d="M128,74 L138,64 L144,78 L130,82 Z" fill="#22c55e" stroke="#1e293b" stroke-width="1.2"/>
+                        <rect x="146" y="64" width="11" height="20" rx="3" fill="#f59e0b" stroke="#1e293b" stroke-width="1.2"/>
+                        <line x1="126" y1="84" x2="162" y2="84" stroke="#1e293b" stroke-width="2"/>
+
+                        <circle cx="135" cy="108" r="6" fill="#dc2626" stroke="#1e293b" stroke-width="1.2"/>
+                        <rect x="144" y="98" width="12" height="14" rx="2" fill="#1e293b" stroke="#1e293b" stroke-width="1.2"/>
+                        <line x1="126" y1="114" x2="162" y2="114" stroke="#1e293b" stroke-width="2"/>
+
+                        <rect x="130" y="124" width="14" height="24" rx="4" fill="#dc2626" stroke="#1e293b" stroke-width="1.3"/>
+                        <circle cx="151" cy="142" r="6" fill="#f97316" stroke="#1e293b" stroke-width="1.2"/>
+                        <line x1="126" y1="148" x2="162" y2="148" stroke="#1e293b" stroke-width="2"/>
+
+                        <rect x="128" y="160" width="9" height="16" rx="2" fill="#65a30d" stroke="#1e293b" stroke-width="1.1"/>
+                        <rect x="139" y="162" width="10" height="16" rx="2" fill="#e11d48" stroke="#1e293b" stroke-width="1.1"/>
+                        <rect x="150" y="164" width="10" height="17" rx="2" fill="#facc15" stroke="#1e293b" stroke-width="1.1"/>
+                    </g>
+
+                    <!-- 2. الفرن الأحمر ذو المفاتيح الخمسة والمقبض المعدني على اليمين -->
+                    <g>
+                        <!-- ظل أرضي بيضاوي تحت الفرن -->
+                        <ellipse cx="248" cy="186" rx="66" ry="8" fill="#cbd5e1"/>
+
+                        <!-- أرجل الفرن السفلية -->
+                        <rect x="206" y="176" width="8" height="12" rx="3" fill="#475569" stroke="#0f172a" stroke-width="2.4"/>
+                        <rect x="282" y="176" width="8" height="12" rx="3" fill="#475569" stroke="#0f172a" stroke-width="2.4"/>
+
+                        <!-- شعلات الغاز العلوية الرمادية -->
+                        <rect x="202" y="34" width="92" height="16" rx="4" fill="#cbd5e1" stroke="#0f172a" stroke-width="2.6"/>
+                        <line x1="202" y1="42" x2="294" y2="42" stroke="#0f172a" stroke-width="2.4"/>
+                        <line x1="232" y1="34" x2="232" y2="50" stroke="#0f172a" stroke-width="2.4"/>
+                        <line x1="264" y1="34" x2="264" y2="50" stroke="#0f172a" stroke-width="2.4"/>
+
+                        <!-- السطح العلوي الأصفر الذهبي -->
+                        <path d="M192,60 C192,52 198,50 206,50 L290,50 C298,50 304,52 304,60 Z" fill="#fbbf24" stroke="#0f172a" stroke-width="2.8" stroke-linejoin="round"/>
+
+                        <!-- جسم الفرن الأحمر الرئيسي -->
+                        <rect x="194" y="60" width="108" height="116" rx="10" fill="#ef4444" stroke="#0f172a" stroke-width="2.8"/>
+                        <!-- تظليل سفلي أحمر داكن -->
+                        <path d="M196,158 L300,158 L300,168 C300,172 296,174 292,174 L204,174 C200,174 196,172 196,168 Z" fill="#dc2626"/>
+                        <line x1="194" y1="158" x2="302" y2="158" stroke="#0f172a" stroke-width="2.4"/>
+
+                        <!-- الشريط المعدني الفضي الفاصل بين المفاتيح والباب -->
+                        <rect x="194" y="84" width="108" height="7" fill="#cbd5e1" stroke="#0f172a" stroke-width="2.2"/>
+
+                        <!-- المفاتيح الدائرية الخمسة -->
+                        <circle cx="212" cy="72" r="6.5" fill="#cbd5e1" stroke="#0f172a" stroke-width="2.2"/>
+                        <circle cx="228" cy="72" r="6.5" fill="#cbd5e1" stroke="#0f172a" stroke-width="2.2"/>
+                        <circle cx="246" cy="72" r="6.5" fill="#cbd5e1" stroke="#0f172a" stroke-width="2.2"/>
+                        <circle cx="268" cy="72" r="6.5" fill="#cbd5e1" stroke="#0f172a" stroke-width="2.2"/>
+                        <circle cx="284" cy="72" r="6.5" fill="#cbd5e1" stroke="#0f172a" stroke-width="2.2"/>
+                        <!-- زرا المؤشر الصغيران أقصى اليمين -->
+                        <circle cx="295" cy="68" r="2" fill="#ffffff" stroke="#0f172a" stroke-width="1.3"/>
+                        <circle cx="295" cy="76" r="2" fill="#ffffff" stroke="#0f172a" stroke-width="1.3"/>
+
+                        <!-- مقبض باب الفرن الفضي العريض -->
+                        <path d="M204,104 C204,98 214,98 218,102 L278,102 C282,98 292,98 292,104 C292,110 282,110 278,106 L218,106 C214,110 204,110 204,104 Z" fill="#e2e8f0" stroke="#0f172a" stroke-width="2.4" stroke-linejoin="round"/>
+
+                        <!-- نافذة باب الفرن الزجاجية -->
+                        <rect x="214" y="116" width="68" height="32" rx="7" fill="#64748b" stroke="#0f172a" stroke-width="2.4"/>
+                        <path d="M218,120 L276,120 L242,144 L218,144 Z" fill="#94a3b8" opacity="0.5"/>
+                        <!-- لمعتان بيضاويتان على جانبي الباب -->
+                        <line x1="203" y1="122" x2="203" y2="138" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                        <line x1="293" y1="122" x2="293" y2="138" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                    </g>
+                </svg>`
+            },
+            {
+                num: 4,
+                sentence: 'They are keys.',
+                isTrue: true,
+                explanationAr: 'صح (✔) — هذه مجموعة مفاتيح (keys).',
+                svg: `<svg viewBox="0 0 220 225" preserveAspectRatio="xMidYMid meet" class="w-full h-full">
+                    <g transform="rotate(42 86 92)">
+                        <circle cx="86" cy="72" r="26" fill="#fef08a" stroke="#0f172a" stroke-width="4.5"/>
+                        <path d="M76,96 L76,174 L86,184 L96,174 L96,154 L90,148 L96,142 L96,132 L90,126 L96,120 L96,96 Z" fill="#fef08a" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                        <line x1="84" y1="104" x2="84" y2="174" stroke="#eab308" stroke-width="4"/>
+                    </g>
+                    <g transform="rotate(22 104 94)">
+                        <circle cx="104" cy="74" r="28" fill="#f59e0b" stroke="#0f172a" stroke-width="4.5"/>
+                        <path d="M93,100 L93,186 L104,196 L115,186 L115,100 Z" fill="#f59e0b" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                        <line x1="101" y1="106" x2="101" y2="188" stroke="#ea580c" stroke-width="4"/>
+                        <rect x="106" y="150" width="7" height="10" fill="#ea580c"/>
+                        <rect x="106" y="164" width="7" height="10" fill="#ea580c"/>
+                    </g>
+                    <g transform="rotate(-10 116 98)">
+                        <circle cx="116" cy="76" r="28" fill="#22c55e" stroke="#0f172a" stroke-width="4.5"/>
+                        <path d="M105,102 L105,146 L98,152 L105,158 L98,164 L105,170 L98,176 L105,182 L105,192 L116,202 L127,192 L127,102 Z" fill="#22c55e" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                        <line x1="115" y1="108" x2="115" y2="194" stroke="#15803d" stroke-width="4"/>
+                    </g>
+                    <g transform="rotate(-26 128 88)">
+                        <circle cx="128" cy="74" r="32" fill="#38bdf8" stroke="#0369a1" stroke-width="5"/>
+                        <path d="M116,104 L116,196 L128,208 L140,196 L140,104 Z" fill="#38bdf8" stroke="#0f172a" stroke-width="4.5" stroke-linejoin="round"/>
+                        <line x1="124" y1="110" x2="124" y2="198" stroke="#0284c7" stroke-width="4.5"/>
+                        <rect x="130" y="156" width="8" height="11" fill="#0369a1"/>
+                        <rect x="130" y="172" width="8" height="11" fill="#0369a1"/>
+                        <circle cx="124" cy="64" r="9" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+                    </g>
+                    <path d="M114,66 A28,28 0 1,1 132,48" fill="none" stroke="#0284c7" stroke-width="8" stroke-linecap="round"/>
+                    <path d="M114,66 A28,28 0 1,1 132,48" fill="none" stroke="#fef08a" stroke-width="3" stroke-linecap="round"/>
+                </svg>`
+            }
+        ];
+
+        let q3AnswersMap = {};
+
+        function initQ3TrueFalse() {
+            const gridEl = document.getElementById('q3-tf-grid');
+            if (!gridEl) return;
+            gridEl.innerHTML = '';
+
+            q3ItemsData.forEach(item => {
+                const card = document.createElement('div');
+                card.id = `q3-card-${item.num}`;
+                card.className = 'bg-slate-50/70 rounded-3xl border-2 border-slate-200 p-4 shadow-sm flex flex-col justify-between gap-3 transition';
+                card.innerHTML = `
+                    <div class="w-full h-32 bg-white rounded-2xl border border-slate-200 p-2 flex items-center justify-center overflow-hidden">
+                        ${item.svg}
+                    </div>
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-emerald-600 text-white font-black text-xs flex items-center justify-center shrink-0 en-text">${item.num}</span>
+                            <p class="en-text text-base sm:text-lg font-extrabold text-slate-900">${item.sentence}</p>
+                        </div>
+                        <button type="button" onclick="speakText('${item.sentence.replace(/'/g, "\\'")}')" class="audio-btn w-8 h-8 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 flex items-center justify-center text-xs shrink-0">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-center gap-3 pt-1">
+                        <button type="button" id="q3-btn-true-${item.num}" onclick="answerQ3(${item.num}, true)" class="flex-1 py-2 px-4 rounded-2xl border-2 border-emerald-300 bg-white hover:bg-emerald-50 text-emerald-700 font-black text-lg transition cursor-pointer flex items-center justify-center gap-2">
+                            <span>✔</span> <span class="text-xs font-extrabold">صح</span>
+                        </button>
+                        <button type="button" id="q3-btn-false-${item.num}" onclick="answerQ3(${item.num}, false)" class="flex-1 py-2 px-4 rounded-2xl border-2 border-rose-300 bg-white hover:bg-rose-50 text-rose-700 font-black text-lg transition cursor-pointer flex items-center justify-center gap-2">
+                            <span>✘</span> <span class="text-xs font-extrabold">خطأ</span>
+                        </button>
+                    </div>
+                    <div id="q3-fb-${item.num}" dir="rtl" class="hidden text-xs font-bold px-3 py-2 rounded-xl text-center"></div>
+                `;
+                gridEl.appendChild(card);
+            });
+        }
+
+        function answerQ3(num, chosenBool) {
+            const item = q3ItemsData.find(x => x.num === num);
+            const card = document.getElementById(`q3-card-${num}`);
+            const fbEl = document.getElementById(`q3-fb-${num}`);
+            const btnT = document.getElementById(`q3-btn-true-${num}`);
+            const btnF = document.getElementById(`q3-btn-false-${num}`);
+            if (!item || !card || !fbEl) return;
+
+            const isCorrect = (chosenBool === item.isTrue);
+            q3AnswersMap[num] = isCorrect;
+
+            btnT.className = 'flex-1 py-2 px-4 rounded-2xl border-2 border-emerald-300 bg-white text-emerald-700 font-black text-lg transition cursor-pointer flex items-center justify-center gap-2';
+            btnF.className = 'flex-1 py-2 px-4 rounded-2xl border-2 border-rose-300 bg-white text-rose-700 font-black text-lg transition cursor-pointer flex items-center justify-center gap-2';
+
+            if (chosenBool) {
+                btnT.classList.add('ring-4', isCorrect ? 'ring-emerald-300' : 'ring-rose-300', isCorrect ? 'bg-emerald-600' : 'bg-rose-600', 'text-white');
+            } else {
+                btnF.classList.add('ring-4', isCorrect ? 'ring-emerald-300' : 'ring-rose-300', isCorrect ? 'bg-emerald-600' : 'bg-rose-600', 'text-white');
+            }
+
+            fbEl.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+            if (isCorrect) {
+                card.classList.remove('border-slate-200', 'border-rose-300');
+                card.classList.add('border-emerald-400', 'bg-emerald-50/40');
+                fbEl.classList.add('bg-emerald-100', 'text-emerald-900');
+                fbEl.textContent = `أحسنت! إجابة صحيحة: ${item.explanationAr}`;
+                speakText(`Correct! ${item.sentence}`);
+            } else {
+                card.classList.remove('border-slate-200', 'border-emerald-400');
+                card.classList.add('border-rose-300', 'shake');
+                fbEl.classList.add('bg-rose-100', 'text-rose-900');
+                fbEl.textContent = `انتبه! ${item.explanationAr}`;
+                speakText(`Try again!`);
+            }
+
+            updateOverallProgress();
+        }
+
+        // =========================================================
+        // 4. بيانات السؤال الرابع: Choose the correct answer (14 فقرة كما في الورقة 3)
+        // =========================================================
+        const q4ItemsData = [
+            { num: 1, text: 'The ______ designs the houses and buildings.', options: ['fridge', 'oven', 'architect'], answer: 'architect', ar: 'المهندس المعماري يصمم المنازل والمباني.' },
+            { num: 2, text: 'We use the ______ to cook food.', options: ['telephone', 'oven', 'screen'], answer: 'oven', ar: 'نستخدم الفرن لطهي الطعام.' },
+            { num: 3, text: 'Keep ice cream in the ______.', options: ['fridge', 'materials', 'basement'], answer: 'fridge', ar: 'احفظ المثلجات في الثلاجة.' },
+            { num: 4, text: 'The ______ is the main door to a house.', options: ['key', 'entrance', 'oven'], answer: 'entrance', ar: 'المدخل هو الباب الرئيسي للمنزل.' },
+            { num: 5, text: 'The ______ helps us open the door.', options: ['oven', 'key', 'Wi-Fi'], answer: 'key', ar: 'المفتاح يساعدنا على فتح الباب.' },
+            { num: 6, text: 'We need the right ______ to build the house.', options: ['telephone', 'measurements', 'layout'], answer: 'measurements', ar: 'نحتاج إلى القياسات الصحيحة لبناء المنزل.' },
+            { num: 7, text: 'The ______ shows which room is the biggest.', options: ['screen', 'gate', 'layout'], answer: 'layout', ar: 'تخطيط الشقة يوضح أي غرفة هي الأكبر.' },
+            { num: 8, text: 'The ______ is a room under the house.', options: ['fridge', 'basement', 'architect'], answer: 'basement', ar: 'القبو هو غرفة تحت المنزل.' },
+            { num: 9, text: 'We use ______ to talk to friends far away.', options: ['gate', 'telephone', 'oven'], answer: 'telephone', ar: 'نستخدم الهاتف للتحدث مع الأصدقاء البعيدين.' },
+            { num: 10, text: 'The ______ is outside and keeps the house safe.', options: ['Wi-Fi', 'gate', 'materials'], answer: 'gate', ar: 'البوابة في الخارج وتحفظ المنزل آمناً.' },
+            { num: 11, text: 'The ______ connects us to the internet.', options: ['entrance', 'Wi-Fi', 'key'], answer: 'Wi-Fi', ar: 'جهاز الإنترنت (واي فاي) يربطنا بالإنترنت.' },
+            { num: 12, text: 'We use good ______ to build a strong house.', options: ['telephone', 'architect', 'materials'], answer: 'materials', ar: 'نستخدم خامات جيدة لبناء منزل قوي.' },
+            { num: 13, text: 'Turn off the ______.', options: ['basement', 'design', 'TV screen'], answer: 'TV screen', ar: 'أغلق شاشة التلفاز.' },
+            { num: 14, text: 'The architect made a wonderful ______.', options: ['fridge', 'key', 'design'], answer: 'design', ar: 'صنع المهندس المعماري تصميماً رائعاً.' }
+        ];
+
+        let q4AnswersMap = {};
+
+        function initQ4MCQ() {
+            const gridEl = document.getElementById('q4-mcq-grid');
+            if (!gridEl) return;
+            gridEl.innerHTML = '';
+
+            q4ItemsData.forEach(item => {
+                const card = document.createElement('div');
+                card.id = `q4-card-${item.num}`;
+                card.className = 'bg-slate-50/80 hover:bg-white rounded-3xl border-2 border-slate-200 p-4 shadow-sm flex flex-col justify-between gap-3 transition';
+
+                const optionsHtml = item.options.map(opt => `
+                    <button type="button" onclick="answerQ4(${item.num}, '${opt.replace(/'/g, "\\'")}', this)"
+                        class="q4-opt-btn-${item.num} en-text flex-1 py-2 px-3 rounded-xl border-2 border-purple-200 bg-white hover:bg-purple-50 text-slate-800 font-extrabold text-sm sm:text-base transition cursor-pointer">
+                        ${opt}
+                    </button>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-7 h-7 rounded-full bg-purple-600 text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5 en-text">${item.num}</span>
+                            <p id="q4-sentence-${item.num}" class="en-text text-base sm:text-lg font-extrabold text-slate-900 leading-snug">${item.text}</p>
+                        </div>
+                        <button type="button" id="q4-audio-${item.num}" onclick="speakText('${item.text.replace('______', item.answer)}')" class="hidden audio-btn w-8 h-8 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 flex items-center justify-center text-xs shrink-0" title="استمع للجملة">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 pt-1">
+                        ${optionsHtml}
+                    </div>
+                    <div id="q4-fb-${item.num}" dir="rtl" class="hidden text-xs font-bold px-3 py-1.5 rounded-xl text-center"></div>
+                `;
+                gridEl.appendChild(card);
+            });
+        }
+
+        function answerQ4(num, chosenOpt, btnEl) {
+            const item = q4ItemsData.find(x => x.num === num);
+            const card = document.getElementById(`q4-card-${num}`);
+            const fbEl = document.getElementById(`q4-fb-${num}`);
+            const sentenceEl = document.getElementById(`q4-sentence-${num}`);
+            if (!item || !card || !fbEl) return;
+
+            const isCorrect = (chosenOpt === item.answer);
+            q4AnswersMap[num] = isCorrect;
+
+            document.querySelectorAll(`.q4-opt-btn-${num}`).forEach(b => {
+                b.className = `q4-opt-btn-${num} en-text flex-1 py-2 px-3 rounded-xl border-2 border-purple-200 bg-white text-slate-800 font-extrabold text-sm sm:text-base transition cursor-pointer`;
+            });
+
+            fbEl.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-900', 'bg-rose-100', 'text-rose-900');
+            card.classList.remove('shake');
+
+            if (isCorrect) {
+                btnEl.classList.remove('border-purple-200', 'bg-white', 'text-slate-800');
+                btnEl.classList.add('border-emerald-600', 'bg-emerald-600', 'text-white', 'shadow');
+                card.classList.remove('border-slate-200', 'border-rose-300');
+                card.classList.add('border-emerald-400', 'bg-emerald-50/40');
+                if (sentenceEl) {
+                    sentenceEl.innerHTML = item.text.replace('______', `<span class="text-emerald-700 underline decoration-2">${item.answer}</span>`);
+                }
+                const audioBtn = document.getElementById(`q4-audio-${num}`);
+                if (audioBtn) audioBtn.classList.remove('hidden');
+                fbEl.classList.add('bg-emerald-100', 'text-emerald-900');
+                fbEl.textContent = `ممتاز! ${item.ar}`;
+                speakText(item.text.replace('______', item.answer));
+            } else {
+                btnEl.classList.remove('border-purple-200', 'bg-white', 'text-slate-800');
+                btnEl.classList.add('border-rose-600', 'bg-rose-600', 'text-white');
+                card.classList.remove('border-slate-200', 'border-emerald-400');
+                card.classList.add('border-rose-300', 'shake');
+                fbEl.classList.add('bg-rose-100', 'text-rose-900');
+                fbEl.textContent = `حاول مرة أخرى! الإجابة الصحيحة هي: (${item.answer}) — ${item.ar}`;
+                speakText(`Try again!`);
+            }
+
+            updateOverallProgress();
+        }
+
+        // =========================================================
+        // 5. تحديث نسبة الإنجاز والتقرير التفصيلي لمستوى الطالب
+        // =========================================================
+        function calculateScores() {
+            const q1Score = q1SolvedSet.size; // من 12
+            const q2Score = q2SolvedSet.size; // من 14
+            const q3Score = Object.values(q3AnswersMap).filter(Boolean).length; // من 4
+            const q4Score = Object.values(q4AnswersMap).filter(Boolean).length; // من 14
+
+            const q3Attempted = Object.keys(q3AnswersMap).length;
+            const q4Attempted = Object.keys(q4AnswersMap).length;
+
+            const totalSolved = q1Score + q2Score + q3Attempted + q4Attempted;
+            const totalCorrect = q1Score + q2Score + q3Score + q4Score;
+            const totalMax = 44;
+
+            return { q1Score, q2Score, q3Score, q4Score, totalSolved, totalCorrect, totalMax };
+        }
+
+        function updateOverallProgress() {
+            const s = calculateScores();
+            const percent = Math.round((s.totalSolved / s.totalMax) * 100);
+
+            const bar = document.getElementById('progress-bar-fill');
+            const pctLabel = document.getElementById('progress-percent-label');
+            const solvedLabel = document.getElementById('header-solved-count');
+            const scoreLabel = document.getElementById('header-score-label');
+
+            if (bar) bar.style.width = `${percent}%`;
+            if (pctLabel) pctLabel.textContent = `${percent}%`;
+            if (solvedLabel) solvedLabel.textContent = `${s.totalSolved} / ${s.totalMax}`;
+            if (scoreLabel) scoreLabel.textContent = `${s.totalCorrect} / ${s.totalMax}`;
+
+            const b1 = document.getElementById('q1-score-badge');
+            const b2 = document.getElementById('q2-score-badge');
+            const b3 = document.getElementById('q3-score-badge');
+            const b4 = document.getElementById('q4-score-badge');
+            if (b1) b1.textContent = `${s.q1Score} / 12`;
+            if (b2) b2.textContent = `${s.q2Score} / 14`;
+            if (b3) b3.textContent = `${s.q3Score} / 4`;
+            if (b4) b4.textContent = `${s.q4Score} / 14`;
+        }
+
+        function generateStudentReport() {
+            checkAllMissingLetters();
+            const s = calculateScores();
+            const percentage = Math.round((s.totalCorrect / s.totalMax) * 100);
+
+            const nameVal = (document.getElementById('student-name-input')?.value || '').trim() || 'بطل اللغة الإنجليزية';
+            const classVal = (document.getElementById('student-class-input')?.value || '').trim() || 'الوحدة الدراسية: Architecture & Home';
+
+            document.getElementById('report-student-name').textContent = nameVal;
+            document.getElementById('report-student-class').textContent = classVal;
+            document.getElementById('report-total-score').textContent = `${s.totalCorrect} / ${s.totalMax}`;
+            document.getElementById('report-percentage').textContent = `${percentage}%`;
+
+            let gradeTitle = '';
+            let gradeStars = '';
+            let adviceText = '';
+            let gradeCardClass = '';
+
+            if (percentage >= 90) {
+                gradeTitle = 'ممتاز ومتميّز (Excellent)';
+                gradeStars = '⭐⭐⭐⭐⭐';
+                gradeCardClass = 'bg-emerald-50 border-2 border-emerald-400 rounded-2xl p-4 text-center shadow-sm';
+                adviceText = `ما شاء الله تبارك الله يا ${nameVal}! أداؤك رائع ومتقن للغاية في حفظ المفردات، الإملاء، الفهم القرائي، وتوظيف الكلمات في الجمل. استمر على هذا التفوق الباهر!`;
+            } else if (percentage >= 80) {
+                gradeTitle = 'جيد جداً مرتفع (Very Good)';
+                gradeStars = '⭐⭐⭐⭐';
+                gradeCardClass = 'bg-sky-50 border-2 border-sky-400 rounded-2xl p-4 text-center shadow-sm';
+                adviceText = `أحسنت يا ${nameVal}! مستوى متقدم ومتميز جداً. راجع فقط الفقرات القليلة التي أخطأت فيها لتصل إلى الدرجة الكاملة بإذن الله.`;
+            } else if (percentage >= 65) {
+                gradeTitle = 'جيد (Good)';
+                gradeStars = '⭐⭐⭐';
+                gradeCardClass = 'bg-amber-50 border-2 border-amber-400 rounded-2xl p-4 text-center shadow-sm';
+                adviceText = `جهد طيب يا ${nameVal}! لديك قاعدة جيدة في المفردات، وننصحك بالاستماع المتكرر لنطق الكلمات والتدرب على كتابة الحروف الناقصة لرفع مستواك أكثر.`;
+            } else {
+                gradeTitle = 'يحتاج إلى مراجعة إضافية';
+                gradeStars = '⭐⭐';
+                gradeCardClass = 'bg-rose-50 border-2 border-rose-300 rounded-2xl p-4 text-center shadow-sm';
+                adviceText = `لا بأس يا ${nameVal}، كل بداية تتطلب تدريباً! ننصحك بالعودة لبطاقات المفردات والاستماع لنطق كل كلمة وتكرارها ثم إعادة الاختبار لتحقيق نتيجة رائعة.`;
+            }
+
+            const gradeCard = document.getElementById('report-grade-card');
+            if (gradeCard) gradeCard.className = gradeCardClass;
+            document.getElementById('report-grade-title').textContent = gradeTitle;
+            document.getElementById('report-grade-stars').textContent = gradeStars;
+            document.getElementById('report-teacher-advice').textContent = adviceText;
+
+            const skillsBreakdown = [
+                { title: 'السؤال الأول: ربط الكلمة بالصورة (Drag & Drop)', score: s.q1Score, max: 12, color: 'bg-blue-600' },
+                { title: 'السؤال الثاني: الإملاء والحروف الناقصة (Spelling)', score: s.q2Score, max: 14, color: 'bg-amber-500' },
+                { title: 'السؤال الثالث: الفهم البصري والقرائي (True / False)', score: s.q3Score, max: 4, color: 'bg-emerald-600' },
+                { title: 'السؤال الرابع: توظيف المفردات في الجمل (MCQ)', score: s.q4Score, max: 14, color: 'bg-purple-600' }
+            ];
+
+            const breakdownGrid = document.getElementById('report-breakdown-grid');
+            if (breakdownGrid) {
+                breakdownGrid.innerHTML = skillsBreakdown.map(sk => {
+                    const pct = Math.round((sk.score / sk.max) * 100);
+                    return `
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
+                            <div class="flex items-center justify-between text-xs sm:text-sm font-extrabold text-slate-800">
+                                <span>${sk.title}</span>
+                                <span class="en-text text-slate-900">${sk.score} / ${sk.max} (${pct}%)</span>
+                            </div>
+                            <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full ${sk.color} rounded-full transition-all duration-500" style="width: ${pct}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const reportSection = document.getElementById('student-report-section');
+            if (reportSection) {
+                reportSection.classList.remove('hidden');
+                reportSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            speakText(`Congratulations! Your final score is ${s.totalCorrect} out of ${s.totalMax}.`);
+        }
+
+        function resetEntireTest() {
+            stopAudio();
+            q1SolvedSet.clear();
+            selectedWordChip = null;
+            q2SolvedSet.clear();
+            q3AnswersMap = {};
+            q4AnswersMap = {};
+
+            initQ1DragAndDrop();
+            initQ2MissingLetters();
+            initQ3TrueFalse();
+            initQ4MCQ();
+            updateOverallProgress();
+
+            const reportSection = document.getElementById('student-report-section');
+            if (reportSection) reportSection.classList.add('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('تمت إعادة الاختبار بالكامل! بالتوفيق يا بطل.');
+        }
+
+        // =========================================================
+        // 6. نظام الصوت التعليمي الهادئ للمعلمة
+        // =========================================================
+        let preferMaleTeacher = false;
+        let isSlowTrainingMode = false;
+        let activeTimeouts = [];
+        let speechSessionCounter = 0;
+
+        function getCurrentSpeechRate() {
+            return isSlowTrainingMode ? 0.65 : 0.76;
+        }
+
+        function showLiveReadingToast(txt) {
+            const toast = document.getElementById('liveReadingToast');
+            const wordEl = document.getElementById('toastWord');
+            const rateEl = document.getElementById('toastRateLabel');
+            if (rateEl) rateEl.innerText = `Calm Educational Voice (${getCurrentSpeechRate()}x):`;
+            if (wordEl) wordEl.innerText = txt;
+            if (toast) {
+                toast.classList.remove('opacity-0', 'translate-y-8');
+                toast.classList.add('opacity-100', 'translate-y-0');
+            }
+        }
+
+        function hideLiveReadingToast() {
+            const toast = document.getElementById('liveReadingToast');
+            if (toast) {
+                toast.classList.add('opacity-0', 'translate-y-8');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }
+        }
+
+        function toggleSpeechSpeed() {
+            isSlowTrainingMode = !isSlowTrainingMode;
+            const speedLabel = document.getElementById('speed-label');
+            if (speedLabel) {
+                speedLabel.textContent = isSlowTrainingMode ? "بطيء جداً (0.65x)" : "هادئ (0.76x)";
+            }
+            showToast(isSlowTrainingMode ? "تم تفعيل النطق البطيء جداً للتدريب!" : "تم تفعيل الصوت التعليمي الهادئ (0.76x)!");
+        }
+
+        function changeTeacherVoice(voiceMode) {
+            preferMaleTeacher = (voiceMode === 'calm-male');
+            stopAudio();
+            speakText("Hello! Good luck on your test.");
+            showToast(preferMaleTeacher ? "تم تفعيل صوت المعلم الهادئ" : "تم تفعيل صوت المعلمة الهادئة");
+        }
+
+        function findCalmEducationalVoice(voicesList, preferMale = false) {
+            if (!voicesList || voicesList.length === 0) return null;
+            const enVoices = voicesList.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+            const pool = enVoices.length > 0 ? enVoices : voicesList;
+
+            const femalePriority = [
+                'emma online (natural)',
+                'ava online (natural)',
+                'jenny online (natural)',
+                'aria online (natural)',
+                'michelle online (natural)',
+                'ana online (natural)',
+                'clara online (natural)',
+                'sonia online (natural)',
+                'google uk english female',
+                'google us english',
+                'samantha',
+                'karen',
+                'moira',
+                'tessa'
+            ];
+
+            const malePriority = [
+                'william multilingual',
+                'william online (natural)',
+                'andrew online (natural)',
+                'liam online (natural)',
+                'ryan online (natural)',
+                'daniel',
+                'david',
+                'mark'
+            ];
+
+            const listToCheck = preferMale ? [...malePriority, ...femalePriority] : [...femalePriority, ...malePriority];
+            for (const key of listToCheck) {
+                const match = pool.find(v => v.name.toLowerCase().includes(key));
+                if (match) return match;
+            }
+            return pool[0] || null;
+        }
+
+        function setSpeakingUI(isSpeaking) {
+            const pulse = document.getElementById('teacher-pulse');
+            const stopBtn = document.getElementById('stop-audio-btn');
+            if (isSpeaking) {
+                if (pulse) pulse.classList.remove('hidden');
+                if (stopBtn) stopBtn.classList.remove('hidden');
+            } else {
+                if (pulse) pulse.classList.add('hidden');
+                if (stopBtn) stopBtn.classList.add('hidden');
+            }
+        }
+
+        function stopAudio() {
+            speechSessionCounter++;
+            activeTimeouts.forEach(t => clearTimeout(t));
+            activeTimeouts = [];
+            if ('speechSynthesis' in window) {
+                try {
+                    window.speechSynthesis.cancel();
+                } catch (e) {}
+            }
+            hideLiveReadingToast();
+            setSpeakingUI(false);
+        }
+
+        function speakText(text) {
+            return new Promise((resolve) => {
+                try {
+                    stopAudio();
+                    const mySession = speechSessionCounter;
+                    const rate = getCurrentSpeechRate();
+                    const pitch = preferMaleTeacher ? 0.94 : 1.04;
+
+                    showLiveReadingToast(text);
+                    setSpeakingUI(true);
+
+                    let finished = false;
+                    let safetyTimer = null;
+                    const finishOnce = () => {
+                        if (finished) return;
+                        finished = true;
+                        if (safetyTimer) clearTimeout(safetyTimer);
+                        if (mySession === speechSessionCounter) {
+                            hideLiveReadingToast();
+                            setSpeakingUI(false);
+                        }
+                        resolve();
+                    };
+
+                    const words = text.trim().split(/\s+/).filter(Boolean).length;
+                    const safetyMs = Math.max(2200, Math.round((words / rate) * 750) + 1800);
+                    safetyTimer = setTimeout(finishOnce, safetyMs);
+                    activeTimeouts.push(safetyTimer);
+
+                    if (!('speechSynthesis' in window)) return;
+
+                    const startTimer = setTimeout(() => {
+                        if (mySession !== speechSessionCounter || finished) return;
+                        try {
+                            const voices = window.speechSynthesis.getVoices();
+                            const chosenVoice = findCalmEducationalVoice(voices, preferMaleTeacher);
+                            const utterance = new SpeechSynthesisUtterance(text);
+                            window.activeUtteranceRef = utterance;
+                            if (chosenVoice) {
+                                utterance.voice = chosenVoice;
+                                utterance.lang = chosenVoice.lang || 'en-US';
+                            } else {
+                                utterance.lang = 'en-US';
+                            }
+                            utterance.rate = rate;
+                            utterance.pitch = pitch;
+                            utterance.volume = 1.0;
+                            utterance.onend = finishOnce;
+                            utterance.onerror = (err) => {
+                                if (err && (err.error === 'canceled' || err.error === 'interrupted')) return;
+                                finishOnce();
+                            };
+                            window.speechSynthesis.speak(utterance);
+                        } catch (e) {
+                            finishOnce();
+                        }
+                    }, 50);
+                    activeTimeouts.push(startTimer);
+                } catch (err) {
+                    resolve();
+                }
+            });
+        }
+
+        let toastTimer = null;
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            const toastText = document.getElementById('toast-text');
+            if (!toast || !toastText) return;
+            toastText.textContent = message;
+            toast.classList.remove('hidden');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3200);
+        }
+
+        window.onload = function () {
+            initQ1DragAndDrop();
+            initQ2MissingLetters();
+            initQ3TrueFalse();
+            initQ4MCQ();
+            updateOverallProgress();
+
+            if ('speechSynthesis' in window) {
+                try {
+                    window.speechSynthesis.getVoices();
+                    window.speechSynthesis.onvoiceschanged = () => {
+                        window.speechSynthesis.getVoices();
+                    };
+                } catch (e) {}
+            }
+        };
+    </script>
+</body>
+</html>
